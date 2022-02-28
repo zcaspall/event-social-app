@@ -1,0 +1,25 @@
+{
+  "name": "event-social-app",
+  "version": "1.0.0",
+  "description": "Event finder app for web applications course",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zcaspall/event-social-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zcaspall/event-social-app/issues"
+  },
+  "homepage": "https://github.com/zcaspall/event-social-app#readme",
+  "dependencies": {
+    "better-sqlite3": "^7.5.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15"
+  }
+}
