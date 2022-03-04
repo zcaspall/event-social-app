@@ -6,15 +6,23 @@ const res = require("express/lib/response");
 const app = express();
 const userModel = require("./Models/userModels")
 
-app.use(express.json());
+app.use(express.static("public", {
+    index: "index.html",
+    extensions: ['html']
+}));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json({limit: '200kb'}));
 
-app.post("/users", (req, res) =>{
-    if(!req.body.userName || !req.body.userPassword){
+app.post("/register", (req, res) =>{
+    if(!req.body.userName || !req.body.userPassword
+        || !req.body.userEmail || !req.body.userPhone){
         return res.sendStatus(400);
     }
 
-    const {userName, userPassword} = req.body;
+    const {userName, userPassword, userEmail, userPhone} = req.body;
     
-    userModel.addUser(userName, userPassword);
+    userModel.createUser(userName, userPassword, userEmail, userPhone);
     res.sendStatus(201);
 });
+
+module.exports = app;

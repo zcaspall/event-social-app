@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/zcaspall/event-social-app#readme",
   "dependencies": {
+    "argon2": "^0.28.5",
     "better-sqlite3": "^7.5.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",

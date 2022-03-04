@@ -1,7 +1,7 @@
 -- Tables
 CREATE TABLE IF NOT EXISTS Users (
     userID TEXT PRIMARY KEY NOT NULL,
-    userName TEXT(20) NOT NULL,
+    userName TEXT(20) UNIQUE NOT NULL,
     userPassword TEXT(20) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
     userPhone INTEGER

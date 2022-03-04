@@ -3,17 +3,22 @@ const db = require("./db");
 const crypto = require("crypto");
 const argon2 = require("argon2");
 
-async function addUser(userID, userPassword){
-    const userID = crypto.randomUUID();
+async function createUser(userName, userPassword, userEmail, userPhone){
+    const uuid = crypto.randomUUID();
     const hash = await argon2.hash(userPassword);
 
-    const sql = ` INSERT INTO users VALUES(@userID, @userName, @userPassword, @userEmail, @userPhone); `;
+    const sql = `
+        INSERT INTO users
+            (userId, userName, userPassword, userEmail, userPhone)
+        VALUES
+            (@userID, @userName, @userPassword, @userEmail, @userPhone)
+    `;
 
     const stmt = db.prepare(sql);
 
     try{
         stmt.run({
-            "userID": userID,
+            "userID": uuid,
             "userName": userName,
             "userPassword": hash,
             "userEmail": userEmail,
