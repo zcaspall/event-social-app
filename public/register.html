@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register for [app name]</title>
+</head>
+<body>
+    <form method = "POST" action = "/register">
+        <div>
+            <label for = "userName">
+                Username
+            </label>
+            <input type = "text" name = "userName" required>
+        </div>
+        <div>
+            <label for = "userPassword">
+                Password
+            </label>
+            <input type = "password" name = "userPassword" required>
+        </div>
+        <div>
+            <label for = "confirmPassword">
+                Confirm Password
+            </label>
+            <input type = "password" name = "confirmPassword" required>
+        </div>
+        <div>
+            <label for = "userEmail">
+                Email
+            </label>
+            <email type = "text" name = "userEmail">
+        </div>
+        <div>
+            <label for = "userDOB">
+                Date of Birth
+            </label>
+            <date name = "userDOB"></date>
+        </div>
+        <div>
+            <label for = "userPhone">
+                Phone Number
+            </label>
+            <tel type = "int" name = "userPhone"></tel>
+        </div>
+        <button type = "Submit">Submit</button>
+    </form>
+</body>
+</html>
