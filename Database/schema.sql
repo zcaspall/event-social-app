@@ -1,6 +1,6 @@
 -- Tables
 CREATE TABLE IF NOT EXISTS Users (
-    userID INTEGER PRIMARY KEY IDENTITY(1,1) NOT NULL,
+    userID TEXT PRIMARY KEY NOT NULL,
     userName TEXT(20) NOT NULL,
     userPassword TEXT(20) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
@@ -18,27 +18,28 @@ CREATE TABLE IF NOT EXISTS Locations (
 CREATE TABLE IF NOT EXISTS Events (
     eventName TEXT(20) NOT NULL,
     eventDate TEXT(20) NOT NULL,
-    eventLocation TEXT(20) FOREIGN KEY REFERENCES Locations(actualLocation),
+    eventLocation TEXT(20),
+    FOREIGN KEY (eventLocation) REFERENCES Locations(actualLocation),
     PRIMARY KEY (eventName, eventDate)
 );
 
 -- Relations
 
-CREATE TABLE UsersGoingTo (
-   userID INTEGER,
+CREATE TABLE IF NOT EXISTS UsersGoingTo (
+   userID TEXT,
    eventName  TEXT(30),
    PRIMARY KEY (userID, eventName)
   );
 
-CREATE TABLE FriendsWith (
-   userID INTEGER,
-   friendID  INTEGER,
+CREATE TABLE IF NOT EXISTS FriendsWith (
+   userID TEXT,
+   friendID  TEXT,
    PRIMARY KEY (userID, friendID)
   );
 
-CREATE TABLE StrikedUsers (
-   userID INTEGER,
-   strikedID  INTEGER,
-   strikeNumber INTEGER,
-   PRIMARY KEY (userID, friendID)
-  );
+-- CREATE TABLE IF NOT EXISTS StrikedUsers (
+--    userID INTEGER,
+--    strikedID  INTEGER,
+--    strikeNumber INTEGER,
+--    PRIMARY KEY (userID, friendID)
+--   );
