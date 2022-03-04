@@ -9,9 +9,9 @@ async function createUser(userName, userPassword, userEmail, userPhone){
 
     const sql = `
         INSERT INTO users
-            (userId, userName, userPassword, userEmail, userPhone)
+            (userId, userName, userPasswordHash, userEmail, userPhone)
         VALUES
-            (@userID, @userName, @userPassword, @userEmail, @userPhone)
+            (@userID, @userName, @userPasswordHash, @userEmail, @userPhone)
     `;
 
     const stmt = db.prepare(sql);
@@ -20,7 +20,7 @@ async function createUser(userName, userPassword, userEmail, userPhone){
         stmt.run({
             "userID": uuid,
             "userName": userName,
-            "userPassword": hash,
+            "userPasswordHash": hash,
             "userEmail": userEmail,
             "userPhone": userPhone,
         });
@@ -30,4 +30,4 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     }
 };
 
-exports.createUser = createUser;
+module.exports.createUser = createUser;

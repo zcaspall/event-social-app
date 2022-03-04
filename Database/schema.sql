@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS Users (
     userID TEXT PRIMARY KEY NOT NULL,
     userName TEXT(20) UNIQUE NOT NULL,
-    userPassword TEXT(20) NOT NULL UNIQUE,
+    userPasswordHash TEXT(50) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
     userPhone INTEGER
 );
@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS FriendsWith (
    PRIMARY KEY (userID, friendID)
   );
 
--- CREATE TABLE IF NOT EXISTS StrikedUsers (
---    userID INTEGER,
---    strikedID  INTEGER,
---    strikeNumber INTEGER,
---    PRIMARY KEY (userID, friendID)
---   );
+CREATE TABLE IF NOT EXISTS StrikedUsers (
+   userID TEXT,
+   strikedID  TEXT,
+   strikeNumber INTEGER,
+   PRIMARY KEY (userID, strikedID)
+  );
