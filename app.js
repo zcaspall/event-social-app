@@ -25,4 +25,14 @@ app.post("/register", (req, res) =>{
     res.sendStatus(201);
 });
 
+app.post("/createLocal", (req, res) =>{
+    if(!req.body.name || !req.body.zip || !req.body.lat || !req.body.long){
+        return res.sendStatus(400);
+    }
+
+    const {name, zip, lat, long} = req.body;
+    userModel.createLocation(name, zip, lat, long);
+    res.sendStatus(200);
+});
+
 module.exports = app;
