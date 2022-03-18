@@ -19,9 +19,9 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     try{
         stmt.run({
             "userID": uuid,
-            "userName": userName,
+            "userName": userName.toLowerCase(),
             "userPasswordHash": hash,
-            "userEmail": userEmail,
+            "userEmail": userEmail.toLowerCase(),
             "userPhone": userPhone,
         });
     }
@@ -30,4 +30,48 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     }
 };
 
-module.exports = createUser;
+function getUserByUsername (userName) {
+    const sql = `SELECT * FROM Users WHERE userName = @userName`;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userName": userName.toLowerCase()
+    });
+
+    return record;
+}
+
+function deleteUserByUsername (userName) {
+    const sql = `DELETE FROM Users WHERE userName = @userName`;
+
+    const stmt = db.prepare(sql);
+    stmt.run({
+        "userName": userName
+    });
+}
+
+function createLocation(name, zip, lat, long){
+    const sql = `INSTERT INTO Locations
+                    (locationName, zip, latitude, longitude)
+                 VALUES
+                    (@name, @zip, @lat, @long)`;
+    
+    const stmt = db.prepare(sql);
+
+    try{
+        stmt.run({
+            "locationName": name,
+            "zip": zip,
+            "latitutde": lat,
+            "longitude": long,
+        });
+    }
+    catch(err){
+        console.error(err);
+    }
+};
+
+module.exports.createUser = createUser;
+module.exports.getUserByUsername = getUserByUsername;
+module.exports.deleteUserByUsername = deleteUserByUsername;
+module.exports.createLocation = createLocation;
