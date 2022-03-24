@@ -12,15 +12,18 @@ CREATE TABLE IF NOT EXISTS Locations (
     zip INTEGER NOT NULL,
     latitude REAL NOT NULL,
     longitude REAL NOT NULL,
-    CONSTRAINT actualLocation PRIMARY KEY (locationName, zip)
+    CONSTRAINT coordinates PRIMARY KEY (latitude, longitude)
 );
 
 CREATE TABLE IF NOT EXISTS Events (
+    eventId TEXT PRIMARY KEY,
     eventName TEXT(20) NOT NULL,
     eventDate TEXT(20) NOT NULL,
     eventLocation TEXT(20),
-    FOREIGN KEY (eventLocation) REFERENCES Locations(actualLocation),
-    PRIMARY KEY (eventName, eventDate)
+    latitude INT NOT NULL,
+    longitude INT NOT NULL,
+    FOREIGN KEY (latitude) REFERENCES Locations(latitude),
+    FOREIGN KEY (longitude) REFERENCES Locations(longitude)
 );
 
 -- Relations
