@@ -30,4 +30,58 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     }
 };
 
+function addStrike(userName, strikedName){
+    const userID = getID(userName);
+    const strikedID = getID(strikedName);
+
+    let success = false;
+
+    if(!checkStrike(userID, strikedID)){
+        const sql = `
+        INSERT INTO StrikedUsers
+            (userID, strikedID)
+        VALUES
+            (@userID, @strikedID)`;
+        const stmt = db.prepare(sql); 
+    
+        stmt.run({userID, strikedID});
+
+        const sql2 = `
+        UPDATE Users
+        SET strikes = strikes + 1
+        WHERE userID = @strikedID`;
+        let stmt2 = db.prepare(sql2); 
+        stmt2.run({strikedID});
+
+        success = true;
+    }
+    return success;
+}
+
+function getID(userName){
+    const sql = `
+        SELECT userID
+        FROM Users 
+        WHERE userName = @userName`;
+    const stmt = db.prepare(sql);
+    const {userID} = stmt.get({userName});
+    
+    return userID;
+}
+
+function checkStrike(userID, strikedID){
+    const sql = `
+        SELECT *
+        FROM StrikedUsers
+        WHERE userID = @userID
+        AND strikedID = @strikedID`;
+    const stmt = db.prepare(sql);
+    const previouslyStriked = stmt.get({
+        "userID": userID, 
+        "strikedID": strikedID
+    });
+    return previouslyStriked;
+}
+
 module.exports.createUser = createUser;
+module.exports.addStrike = addStrike;

@@ -1,4 +1,5 @@
 -- Tables
+
 CREATE TABLE IF NOT EXISTS Users (
     userID TEXT PRIMARY KEY NOT NULL,
     userName TEXT(20) UNIQUE NOT NULL,
