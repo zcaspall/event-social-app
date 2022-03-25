@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS Users (
     userName TEXT(20) UNIQUE NOT NULL,
     userPasswordHash TEXT(50) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
-    userPhone INTEGER
+    userPhone INTEGER,
+    strikes INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS Locations (
@@ -40,6 +41,5 @@ CREATE TABLE IF NOT EXISTS FriendsWith (
 CREATE TABLE IF NOT EXISTS StrikedUsers (
    userID TEXT,
    strikedID  TEXT,
-   strikeNumber INTEGER,
    PRIMARY KEY (userID, strikedID)
   );
