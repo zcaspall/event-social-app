@@ -27,7 +27,7 @@ app.post("/register", (req, res) =>{
     res.sendStatus(201);
 });
 
-app.post("/strike", (req, res) =>{
+app.post("/report", (req, res) =>{
     if(!req.body.userName || !req.body.strikedName){
         return res.sendStatus(400);
     }
