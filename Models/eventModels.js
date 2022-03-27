@@ -1,3 +1,5 @@
+"use strict";
+
 function createLocation(name, zip, lat, long){
     const sql = `INSTERT INTO Locations
                     (locationName, zip, latitude, longitude)
