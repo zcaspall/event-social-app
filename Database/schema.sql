@@ -1,4 +1,4 @@
--- Tables
+-- User tables
 CREATE TABLE IF NOT EXISTS Users (
     userID TEXT PRIMARY KEY NOT NULL,
     userName TEXT(20) UNIQUE NOT NULL,
@@ -7,23 +7,17 @@ CREATE TABLE IF NOT EXISTS Users (
     userPhone INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS Locations (
-    locationName TEXT(20) NOT NULL,
-    zip INTEGER NOT NULL,
-    latitude REAL NOT NULL,
-    longitude REAL NOT NULL,
-    CONSTRAINT coordinates PRIMARY KEY (latitude, longitude)
-);
 
+-- Event tables
 CREATE TABLE IF NOT EXISTS Events (
     eventId TEXT PRIMARY KEY,
     eventName TEXT(20) NOT NULL,
     eventDate TEXT(20) NOT NULL,
-    eventLocation TEXT(20),
+    locationName TEXT(20),
+    zipcode INT NOT NULL,
     latitude INT NOT NULL,
     longitude INT NOT NULL,
-    FOREIGN KEY (latitude) REFERENCES Locations(latitude),
-    FOREIGN KEY (longitude) REFERENCES Locations(longitude)
+    CONSTRAINT coordinates PRIMARY KEY (latitude, longitude)
 );
 
 -- Relations

@@ -1,27 +1,31 @@
-function createLocation(name, zip, lat, long){
-    const sql = `INSTERT INTO Locations
-                    (locationName, zip, latitude, longitude)
-                 VALUES
-                    (@name, @zip, @lat, @long)`;
-    
+"use strict";
+const db = require("./db");
+
+// the users create the events
+function addNewEvent(eventName, eventDate, locationName, lat, long,){
+    const uuid = crypto.randomUUID();
+
+    const sql = `INSERT INTO Events
+                    (eventID, eventName, eventDate, locationName, zipcode, latitude, longitude)
+                VALUES
+                    (@uuid, @eventName, @eventDate, @locationName, @zip, @lat, @long)`;
     const stmt = db.prepare(sql);
 
     try{
         stmt.run({
-            "locationName": name,
+            "eventID": uuid,
+            "eventName": eventName,
+            "eventDate": eventDate,
+            "locationName": locationName,
             "zip": zip,
-            "latitutde": lat,
+            "latitude": lat,
             "longitude": long,
         });
     }
     catch(err){
-        console.error(err);
+        console.log(err);
     }
 };
-
-function createEvent(eventName, eventDate, eventLocation){
-    
-}
 
 function getEventsByKeyword(keyword) {
     // Searches for event that contains keyword
@@ -62,4 +66,10 @@ function getEventsByLocation(coordinates, radius, inMiles=true) {
         unitCoefficient,
         radius,
     });
+};
+
+module.exports = {
+    addNewEvent,
+    getEventsByKeyword,
+    getEventsByLocation,
 };
