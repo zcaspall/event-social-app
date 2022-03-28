@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS Users (
 
 -- Event tables
 CREATE TABLE IF NOT EXISTS Events (
-    eventId TEXT PRIMARY KEY,
+    eventId TEXT UNIQUE PRIMARY KEY,
+    hostId TEXT NOT NULL UNIQUE REFERENCES Users(userID),
     eventName TEXT(20) NOT NULL,
     eventDate TEXT(20) NOT NULL,
     locationName TEXT(20),
