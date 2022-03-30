@@ -44,7 +44,12 @@ function addStrike(userName, strikedName){
             (@userID, @strikedID)`;
         const stmt = db.prepare(sql); 
     
-        stmt.run({userID, strikedID});
+        try {
+            stmt.run({userID, strikedID});
+        } catch (err) {
+            console.error(err);
+            return success;
+        }
 
         const sql2 = `
         UPDATE Users
@@ -55,6 +60,7 @@ function addStrike(userName, strikedName){
 
         success = true;
     }
+    
     return success;
 }
 
@@ -65,7 +71,7 @@ function getID(userName){
         WHERE userName = @userName`;
     const stmt = db.prepare(sql);
     const {userID} = stmt.get({userName});
-    
+
     return userID;
 }
 
@@ -76,10 +82,17 @@ function checkStrike(userID, strikedID){
         WHERE userID = @userID
         AND strikedID = @strikedID`;
     const stmt = db.prepare(sql);
-    const previouslyStriked = stmt.get({
-        "userID": userID, 
-        "strikedID": strikedID
-    });
+    let previouslyStriked;
+    try {
+        previouslyStriked = stmt.get({
+            "userID": userID, 
+            "strikedID": strikedID
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+
     return previouslyStriked;
 }
 
