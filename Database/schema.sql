@@ -16,8 +16,7 @@ CREATE TABLE IF NOT EXISTS Events (
     locationName TEXT(20),
     zipcode INT NOT NULL,
     latitude INT NOT NULL,
-    longitude INT NOT NULL,
-    CONSTRAINT coordinates PRIMARY KEY (latitude, longitude)
+    longitude INT NOT NULL
 );
 
 -- Relations

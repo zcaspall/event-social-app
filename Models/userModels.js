@@ -1,7 +1,8 @@
 "use strict";
-const db = require("./db");
-const crypto = require("crypto");
 const argon2 = require("argon2");
+const crypto = require ("crypto");
+const db = require("./db");
+
 
 async function createUser(userName, userPassword, userEmail, userPhone){
     const uuid = crypto.randomUUID();
@@ -9,7 +10,7 @@ async function createUser(userName, userPassword, userEmail, userPhone){
 
     const sql = `
         INSERT INTO users
-            (userId, userName, userPasswordHash, userEmail, userPhone)
+            (userID, userName, userPasswordHash, userEmail, userPhone)
         VALUES
             (@userID, @userName, @userPasswordHash, @userEmail, @userPhone)
     `;
@@ -50,28 +51,8 @@ function deleteUserByUsername (userName) {
     });
 }
 
-function createLocation(name, zip, lat, long){
-    const sql = `INSTERT INTO Locations
-                    (locationName, zip, latitude, longitude)
-                 VALUES
-                    (@name, @zip, @lat, @long)`;
-    
-    const stmt = db.prepare(sql);
-
-    try{
-        stmt.run({
-            "locationName": name,
-            "zip": zip,
-            "latitutde": lat,
-            "longitude": long,
-        });
-    }
-    catch(err){
-        console.error(err);
-    }
-};
-
-module.exports.createUser = createUser;
-module.exports.getUserByUsername = getUserByUsername;
-module.exports.deleteUserByUsername = deleteUserByUsername;
-module.exports.createLocation = createLocation;
+module.exports = {
+    createUser,
+    getUserByUsername,
+    deleteUserByUsername
+}
