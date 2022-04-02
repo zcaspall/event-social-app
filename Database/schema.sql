@@ -13,12 +13,12 @@ CREATE TABLE IF NOT EXISTS Events (
     eventId TEXT UNIQUE PRIMARY KEY,
     hostId TEXT NOT NULL UNIQUE REFERENCES Users(userID),
     eventName TEXT(20) NOT NULL,
+    eventDescription TEXT(200),
     eventDate TEXT(20) NOT NULL,
     locationName TEXT(20),
     zipcode INT NOT NULL,
     latitude INT NOT NULL,
     longitude INT NOT NULL,
-    CONSTRAINT coordinates PRIMARY KEY (latitude, longitude)
 );
 
 -- Relations
