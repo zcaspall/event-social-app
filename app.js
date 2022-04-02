@@ -7,6 +7,7 @@ const res = require("express/lib/response");
 const app = express();
 const userModel = require("./Models/userModels")
 
+app.set('view engine', 'ejs');
 app.use(express.static("public", {
     index: "index.html",
     extensions: ['html']
