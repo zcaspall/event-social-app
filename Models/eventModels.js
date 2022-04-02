@@ -1,14 +1,14 @@
 "use strict";
 const db = require("./db");
+const crypto = require ("crypto");
 
 // the users create the events
-function addNewEvent(eventName, eventDate, locationName, lat, long,){
+function addNewEvent(eventName, eventDate, locationName, zip, lat, long,){
     const uuid = crypto.randomUUID();
-
     const sql = `INSERT INTO Events
                     (eventID, eventName, eventDate, locationName, zipcode, latitude, longitude)
                 VALUES
-                    (@uuid, @eventName, @eventDate, @locationName, @zip, @lat, @long)`;
+                    (@eventID, @eventName, @eventDate, @locationName, @zipcode, @latitude, @longitude)`;
     const stmt = db.prepare(sql);
 
     try{
@@ -17,7 +17,7 @@ function addNewEvent(eventName, eventDate, locationName, lat, long,){
             "eventName": eventName,
             "eventDate": eventDate,
             "locationName": locationName,
-            "zip": zip,
+            "zipcode": zip,
             "latitude": lat,
             "longitude": long,
         });

@@ -2,10 +2,14 @@
 const eventModels = require("../Models/eventModels");
 
 async function createEvent(req, res){
-    const {name, date, localName, zip, lat, long} = req.body;
-    await eventModels.addNewEvent(name, date, localName, zip, lat, long);
+    const {eventName, eventDate, locationName, zipcode, latitude, longitude} = req.body;
 
+    if(!req.body.eventName || !req.body.eventDate || !req.body.locationName || !req.body.zipcode || !req.body.latitude || !req.body.longitude){
+       return res.sendStatus(400)
+    }
 
+    await eventModels.addNewEvent(eventName, eventDate, locationName, zipcode, latitude, longitude);
+    res.sendStatus(200);
 }
 
 function getSearchResultsByKeyword(req, res){
@@ -14,7 +18,7 @@ function getSearchResultsByKeyword(req, res){
     res.render("searchResults", {events});
 }
 
-module.exports = {
+module.exports = { 
     createEvent,
     getSearchResultsByKeyword,
 }
