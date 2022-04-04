@@ -23,6 +23,6 @@ app.post("/login", userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 
 app.post("/makeEvent", eventController.createEvent);
-app.get("/getEvent", eventController.getByKeyword);
+app.get("/getEvent", eventController.getSearchResultsByKeyword);
 
 module.exports = app;
