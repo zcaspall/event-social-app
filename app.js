@@ -42,5 +42,19 @@ app.post("/report", (req, res) =>{
     res.sendStatus(200);
 });
 
+app.post("/friend", (req, res) =>{
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, friendName} = req.body;
+    
+    const success = userModel.addFriend(userName, friendName);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+});
 
 module.exports = app;

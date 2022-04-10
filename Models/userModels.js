@@ -1,7 +1,62 @@
 "use strict";
 const db = require("./db");
 const crypto = require("crypto");
-const argon2 = require("argon2");
+const argon2 = require("argon2");	
+const nodemailer = require("nodemailer");
+const { env } = require("process");
+ 
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+        user: process.env.EMAIL_ADDR,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+const requestText = (
+    "You have been sent a friend request.\n\n" +
+    `Use this link to accept: ${process.env.URL}`
+    //Use this link to accept: ${process.env.URL}/accept
+);
+
+const requestHTML = (
+    "<h1 style=\"margin-bottom: 1rem;\">You have been sent a friend request!</h1>" +
+  "<p>" +
+    `Click <a href="${process.env.URL}">here</a> to accept!` +
+  "</p>"
+);
+
+/* Return's true if the email sent successfully and false otherwise */
+async function sendEmail (recipient, subject, text, html) {
+    
+    const message = {
+      from: process.env.EMAIL_ADDR,
+      to: recipient,
+      subject: subject,
+      text: text,
+      html: html
+    };
+    
+    try {
+      await transporter.sendMail(message);
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+};
+
+	
+async function sendFriendReq (to) {
+    const emailSent = await sendEmail(to, "You have a friend request!", requestText, requestHTML);
+    if (emailSent) {
+      console.log("Email Sent to " + to);
+      console.log("\n");
+    } else {
+        console.log("Email Failed to Send");
+        console.log("\n");
+    }
+};
 
 async function createUser(userName, userPassword, userEmail, userPhone){
     const uuid = crypto.randomUUID();
@@ -60,20 +115,51 @@ function addStrike(userName, strikedName){
 
         success = true;
     }
-    
+
     return success;
-}
+};
 
 function getID(userName){
-    const sql = `
-        SELECT userID
+    const sql = 
+       `SELECT userID
         FROM Users 
         WHERE userName = @userName`;
     const stmt = db.prepare(sql);
-    const {userID} = stmt.get({userName});
-
+    //const {userID} = stmt.get({userName});
+    let userID;
+    try {
+        userID = stmt.get({
+            "userName": userName
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    console.log(userID);
     return userID;
-}
+};
+
+function getName(userID){
+    const sql = `
+        SELECT userName
+        FROM Users 
+        WHERE userID = @userID`;
+    const stmt = db.prepare(sql);
+    const {userName} = stmt.get({userID});
+
+    return userName;
+};
+
+function getEmail(userID){
+    const sql = `
+        SELECT userEmail
+        FROM Users 
+        WHERE userID = @userID`;
+    const stmt = db.prepare(sql);
+    const {userEmail} = stmt.get({userID});
+
+    return userEmail;
+};
 
 function checkStrike(userID, strikedID){
     const sql = `
@@ -94,7 +180,113 @@ function checkStrike(userID, strikedID){
     }
 
     return previouslyStriked;
+};
+
+function addFriend(userName, friendName){
+    let success = true;
+    //const userID = getID(userName);
+    const sql = `
+    INSERT INTO Friends
+        (userName, friendName)
+    VALUES
+        (@userName, @friendName)`;
+    const stmt = db.prepare(sql);
+    const friendID = getID(friendName);
+    if (friendID){   
+        console.log("got userID");
+        if (!checkFriend(userName, friendName)){
+            console.log("not currently friends");
+            try {
+                stmt.run({
+                    "userName": userName, 
+                    "friendName": friendName
+                });
+            } catch (err) {
+                console.error(err);
+                return;
+            }
+            const friendEmail = getEmail(friendID);
+            sendFriendReq (friendEmail);
+            
+        } else success = false;
+    }
+    return success;
+};
+
+function checkFriend(userName, friendName){
+    let friendFirst = null;
+    let userFirst;
+    let alreadyRequested = false;
+    console.log("username:" + userName);
+    const sql = `
+        SELECT *
+        FROM Friends
+        WHERE userName = @userName
+        AND friendName = @friendName`;
+    
+    const stmt = db.prepare(sql);
+    try {
+        userFirst = stmt.get({
+            "userName": userName, 
+            "friendName": friendName
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    
+    try {
+        friendFirst = stmt.get({
+            "userName": friendName, 
+            "friendName": userName
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    if(friendFirst || userFirst){
+        alreadyRequested = true;
+    }
+    return alreadyRequested;
+};
+
+function dropTable(tableName){
+    
+    const sql = `DROP TABLE @tableName`;
+    const stmt = db.prepare(sql);
+    try {
+        stmt.run({
+            "tableName": tableName
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
 }
+
+function confirmUser(userID){
+    let user;
+    const sql = `
+        SELECT *
+        FROM Users
+        WHERE userID = @userID`;
+    const stmt = db.prepare(sql);
+
+    try {
+        user = stmt.get({
+            "userID": userID, 
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    return user;
+}
+
+function acceptRequest(userID, friendID){
+    
+};
 
 module.exports.createUser = createUser;
 module.exports.addStrike = addStrike;
+module.exports.addFriend = addFriend;
