@@ -15,10 +15,16 @@ CREATE TABLE IF NOT EXISTS Events (
     eventName TEXT(20) NOT NULL,
     eventDescription TEXT(200),
     eventDate TEXT(20) NOT NULL,
-    locationName TEXT(20),
+    locationName TEXT(100) NOT NULL,
     zipcode INT NOT NULL,
     latitude INT NOT NULL,
     longitude INT NOT NULL
+);
+
+-- Image Table
+CREATE TABLE IF NOT EXISTS Images (
+    imageId TEXT UNIQUE PRIMARY KEY,
+    imagePath TEXT(100) NOT NULL, -- Path to image in filesystem
 );
 
 -- Relations
@@ -41,3 +47,9 @@ CREATE TABLE IF NOT EXISTS StrikedUsers (
    strikeNumber INTEGER,
    PRIMARY KEY (userID, strikedID)
   );
+
+CREATE TABLE IF NOT EXISTS EventImages (
+    eventId TEXT,
+    imageId TEXT,
+    PRIMARY KEY (eventId, imageId),
+);
