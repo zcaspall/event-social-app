@@ -9,6 +9,7 @@ const app = express();
 const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
 
+app.set('view engine', 'ejs');
 app.use(express.static("public", {
     index: "index.html",
     extensions: ['html']
@@ -22,6 +23,6 @@ app.post("/login", userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 
 app.post("/makeEvent", eventController.createEvent);
-app.get("/getEvent", eventController.getByKeyword);
+app.get("/getEvent", eventController.getSearchResultsByKeyword);
 
 module.exports = app;

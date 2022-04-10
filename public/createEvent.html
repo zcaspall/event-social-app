@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+</head>
+<body>
+    <form action="/api/createEvent" method="post" id="createEventForm">
+        <label for="eventName">Event Name</label>
+        <input type="text" name="eventName" id="eventName">
+        <label for="eventDate">Event Date</label>
+        <input type="datetime" name="eventDate" id="eventDate">
+        <label for="eventDescription">Event Description</label>
+        <textarea name="eventDescription" id="eventDescription">
+            Event Description...
+        </textarea>
+        <div class="locationContainer" id="locationContainer"></div>
+        <button type="submit">Create Event</button>
+    </form>
+</body>
+</html>
