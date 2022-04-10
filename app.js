@@ -1,10 +1,29 @@
 "use strict";
 require("dotenv").config();
 
-const argon2 = require("argon2");
+const redis = require("redis");
+const session = require("express-session");
+const RedisStore = require("connect-redis")(session);
 const express = require("express");
-const res = require("express/lib/response");
 const app = express();
+
+const sessionConfig = {
+    store: new RedisStore({ client: redis.createClient() }),
+    secret: process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    name: "session",
+    cookie: {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 8,
+    }
+};
+
+app.use(session(sessionConfig));
+
+app.use(express.static("public", {index: "index.html", extensions: ["html"]}));
+
+app.use(express.urlencoded({extended: false}));
 
 const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
