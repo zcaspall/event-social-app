@@ -20,12 +20,12 @@ function getByKeyword(req, res){
     res.sendStatus(200);
 }
 
-// function getByLocation(req, res){
-
-// }
+function getByLocation(req, res){
+    
+}
 
 module.exports = { 
     createEvent,
-    getByKeyword
-    //getByLocation
+    getByKeyword,
+    getByLocation
 }

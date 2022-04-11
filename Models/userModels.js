@@ -47,7 +47,7 @@ function deleteUserByUsername (userName) {
 
     const stmt = db.prepare(sql);
     stmt.run({
-        "userName": userName
+        "userName": userName.toLowerCase()
     });
 }
 

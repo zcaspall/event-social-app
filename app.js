@@ -21,7 +21,8 @@ app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 
-app.post("/makeEvent", eventController.createEvent);
-app.get("/getEvent", eventController.getByKeyword);
+//event endpoints
+app.post("/events", eventController.createEvent);
+app.get("/events", eventController.getByKeyword);
 
 module.exports = app;

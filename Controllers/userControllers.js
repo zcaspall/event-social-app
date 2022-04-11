@@ -39,8 +39,11 @@ async function loginUser(req, res){
 }
 
 function deleteUserByName(req, res){
-    const { userName } = req.params;
+    const { userName } = req.body;
     // make it so it sends an error when the username is not found
+    if(!userModels.getUserByUsername(userName)){
+        return res.sendStatus(404);
+    }
     
     userModels.deleteUserByUsername(userName);
     res.sendStatus(200);
