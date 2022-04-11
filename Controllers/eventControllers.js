@@ -12,20 +12,13 @@ async function createEvent(req, res){
     res.sendStatus(200);
 }
 
-function getByKeyword(req, res){
-    searchWord = req.body.keyword;
-    if(!eventModels.getEventsByKeyword(searchWord)){
-        res.sendStatus(400);
-    }
-    res.sendStatus(200);
-}
+function getSearchResultsByKeyword(req, res){
+    const events = eventModels.getEventsByKeyword(req.body.keyword);
 
-function getByLocation(req, res){
-    
+    res.render("searchResults", {events});
 }
 
 module.exports = { 
     createEvent,
-    getByKeyword,
-    getByLocation
+    getSearchResultsByKeyword,
 }

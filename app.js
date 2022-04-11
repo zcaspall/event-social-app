@@ -9,6 +9,7 @@ const app = express();
 const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
 
+app.set('view engine', 'ejs');
 app.use(express.static("public", {
     index: "index.html",
     extensions: ['html']
