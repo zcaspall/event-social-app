@@ -49,12 +49,24 @@ app.post("/friend", (req, res) =>{
 
     const {userName, friendName} = req.body;
     
-    const success = userModel.addFriend(userName, friendName);
+    const success = userModel.requestFriend(userName, friendName);
     if (!success){
         return res.sendStatus(409);
     }
 
     res.sendStatus(200);
 });
+
+app.post("/accept", (req, res) =>{
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, friendName} = req.body; 
+    userModel.acceptRequest(userName, friendName);
+
+    res.sendStatus(200);
+});
+
 
 module.exports = app;

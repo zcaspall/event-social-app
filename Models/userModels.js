@@ -15,8 +15,8 @@ const transporter = nodemailer.createTransport({
 
 const requestText = (
     "You have been sent a friend request.\n\n" +
-    `Use this link to accept: ${process.env.URL}`
-    //Use this link to accept: ${process.env.URL}/accept
+    //`Use this link to accept: ${process.env.URL}`
+    `Use this link to accept: ${process.env.URL}/accept`
 );
 
 const requestHTML = (
@@ -125,29 +125,10 @@ function getID(userName){
         FROM Users 
         WHERE userName = @userName`;
     const stmt = db.prepare(sql);
-    //const {userID} = stmt.get({userName});
-    let userID;
-    try {
-        userID = stmt.get({
+    const {userID} = stmt.get({
             "userName": userName
         });
-    } catch (err) {
-        console.error(err);
-        return;
-    }
-    console.log(userID);
     return userID;
-};
-
-function getName(userID){
-    const sql = `
-        SELECT userName
-        FROM Users 
-        WHERE userID = @userID`;
-    const stmt = db.prepare(sql);
-    const {userName} = stmt.get({userID});
-
-    return userName;
 };
 
 function getEmail(userID){
@@ -157,7 +138,6 @@ function getEmail(userID){
         WHERE userID = @userID`;
     const stmt = db.prepare(sql);
     const {userEmail} = stmt.get({userID});
-
     return userEmail;
 };
 
@@ -182,9 +162,8 @@ function checkStrike(userID, strikedID){
     return previouslyStriked;
 };
 
-function addFriend(userName, friendName){
+function requestFriend(userName, friendName){
     let success = true;
-    //const userID = getID(userName);
     const sql = `
     INSERT INTO Friends
         (userName, friendName)
@@ -217,7 +196,6 @@ function checkFriend(userName, friendName){
     let friendFirst = null;
     let userFirst;
     let alreadyRequested = false;
-    console.log("username:" + userName);
     const sql = `
         SELECT *
         FROM Friends
@@ -250,43 +228,36 @@ function checkFriend(userName, friendName){
     return alreadyRequested;
 };
 
-function dropTable(tableName){
+function acceptRequest(userName, friendName){
+    const sql = `
+        UPDATE Friends
+        SET accepted = 1
+        WHERE userName = @userName
+        AND friendName = @friendName`;
     
-    const sql = `DROP TABLE @tableName`;
     const stmt = db.prepare(sql);
     try {
         stmt.run({
-            "tableName": tableName
+            "userName": userName, 
+            "friendName": friendName
         });
     } catch (err) {
         console.error(err);
         return;
     }
-}
-
-function confirmUser(userID){
-    let user;
-    const sql = `
-        SELECT *
-        FROM Users
-        WHERE userID = @userID`;
-    const stmt = db.prepare(sql);
-
-    try {
-        user = stmt.get({
-            "userID": userID, 
-        });
-    } catch (err) {
-        console.error(err);
-        return;
-    }
-    return user;
-}
-
-function acceptRequest(userID, friendID){
     
+    try {
+        stmt.run({
+            "userName": friendName, 
+            "friendName": userName
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
 };
 
 module.exports.createUser = createUser;
 module.exports.addStrike = addStrike;
-module.exports.addFriend = addFriend;
+module.exports.requestFriend = requestFriend;
+module.exports.acceptRequest = acceptRequest;
