@@ -1,7 +1,8 @@
 "use strict";
-const db = require("./db");
-const crypto = require("crypto");
 const argon2 = require("argon2");
+const crypto = require ("crypto");
+const db = require("./db");
+
 
 async function createUser(userName, userPassword, userEmail, userPhone){
     const uuid = crypto.randomUUID();
@@ -9,7 +10,7 @@ async function createUser(userName, userPassword, userEmail, userPhone){
 
     const sql = `
         INSERT INTO users
-            (userId, userName, userPasswordHash, userEmail, userPhone)
+            (userID, userName, userPasswordHash, userEmail, userPhone)
         VALUES
             (@userID, @userName, @userPasswordHash, @userEmail, @userPhone)
     `;
@@ -19,9 +20,9 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     try{
         stmt.run({
             "userID": uuid,
-            "userName": userName,
+            "userName": userName.toLowerCase(),
             "userPasswordHash": hash,
-            "userEmail": userEmail,
+            "userEmail": userEmail.toLowerCase(),
             "userPhone": userPhone,
         });
     }
@@ -30,4 +31,28 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     }
 };
 
-module.exports.createUser = createUser;
+function getUserByUsername (userName) {
+    const sql = `SELECT * FROM Users WHERE userName = @userName`;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userName": userName.toLowerCase()
+    });
+
+    return record;
+}
+
+function deleteUserByUsername (userName) {
+    const sql = `DELETE FROM Users WHERE userName = @userName`;
+
+    const stmt = db.prepare(sql);
+    stmt.run({
+        "userName": userName.toLowerCase()
+    });
+}
+
+module.exports = {
+    createUser,
+    getUserByUsername,
+    deleteUserByUsername
+}
