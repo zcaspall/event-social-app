@@ -49,8 +49,58 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
+
+function sendFriendRequest(req, res){
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+    let {userName, friendName} = req.body;
+    userName = userName.toLowerCase();
+    friendName = friendName.toLowerCase();
+
+    const success = userModels.requestFriend(userName, friendName);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+};
+
+function sendUserReport(req, res){
+    if(!req.body.userName || !req.body.reportedName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, reportedName} = req.body;
+    
+    const success = userModels.reportUser(userName, reportedName);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+};
+
+function acceptFriendRequest (req, res){
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, friendName} = req.body; 
+    userModels.acceptRequest(userName, friendName);
+
+    res.sendStatus(200);
+};
+
+
+
+
+
 module.exports = {
     createNewUser,
     loginUser,
-    deleteUserByName
+    deleteUserByName,
+    sendFriendRequest,
+    sendUserReport,
+    acceptFriendRequest
 }

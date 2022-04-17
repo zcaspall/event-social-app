@@ -47,14 +47,12 @@ async function sendEmail (recipient, subject, text, html) {
 };
 
 	
-async function sendFriendReq (to) {
+async function sendFriendReqEmail (to) {
     const emailSent = await sendEmail(to, "You have a friend request!", requestText, requestHTML);
     if (emailSent) {
       console.log("Email Sent to " + to);
-      console.log("\n");
     } else {
         console.log("Email Failed to Send");
-        console.log("\n");
     }
 };
 
@@ -105,22 +103,25 @@ function deleteUserByUsername (userName) {
     });
 }
 
-function addStrike(userName, strikedName){
-    const userID = getID(userName);
-    const strikedID = getID(strikedName);
+function reportUser(userName, reportedName){
+    const user = getUserByUsername(userName);
+    const reportedUser = getUserByUsername(reportedName);
+    
+    const userID = user.userID;
+    const reportedID = reportedUser.userID;
 
     let success = false;
 
-    if(!checkStrike(userID, strikedID)){
+    if(!checkForStrikes(userID, reportedID)){
         const sql = `
-        INSERT INTO StrikedUsers
-            (userID, strikedID)
+        INSERT INTO ReportedUsers
+            (userID, reportedID)
         VALUES
-            (@userID, @strikedID)`;
+            (@userID, @reportedID)`;
         const stmt = db.prepare(sql); 
     
         try {
-            stmt.run({userID, strikedID});
+            stmt.run({userID, reportedID});
         } catch (err) {
             console.error(err);
             return success;
@@ -129,9 +130,9 @@ function addStrike(userName, strikedName){
         const sql2 = `
         UPDATE Users
         SET strikes = strikes + 1
-        WHERE userID = @strikedID`;
+        WHERE userID = @reportedID`;
         let stmt2 = db.prepare(sql2); 
-        stmt2.run({strikedID});
+        stmt2.run({reportedID});
 
         success = true;
     }
@@ -139,40 +140,18 @@ function addStrike(userName, strikedName){
     return success;
 };
 
-function getID(userName){
-    const sql = 
-       `SELECT userID
-        FROM Users 
-        WHERE userName = @userName`;
-    const stmt = db.prepare(sql);
-    const {userID} = stmt.get({
-            "userName": userName
-        });
-    return userID;
-};
-
-function getEmail(userID){
-    const sql = `
-        SELECT userEmail
-        FROM Users 
-        WHERE userID = @userID`;
-    const stmt = db.prepare(sql);
-    const {userEmail} = stmt.get({userID});
-    return userEmail;
-};
-
-function checkStrike(userID, strikedID){
+function checkForStrikes(userID, reportedID){
     const sql = `
         SELECT *
-        FROM StrikedUsers
+        FROM ReportedUsers
         WHERE userID = @userID
-        AND strikedID = @strikedID`;
+        AND reportedID = @reportedID`;
     const stmt = db.prepare(sql);
     let previouslyStriked;
     try {
         previouslyStriked = stmt.get({
             "userID": userID, 
-            "strikedID": strikedID
+            "reportedID": reportedID
         });
     } catch (err) {
         console.error(err);
@@ -183,18 +162,18 @@ function checkStrike(userID, strikedID){
 };
 
 function requestFriend(userName, friendName){
+    const friend = getUserByUsername(userName);
     let success = true;
+
     const sql = `
     INSERT INTO Friends
         (userName, friendName)
     VALUES
         (@userName, @friendName)`;
     const stmt = db.prepare(sql);
-    const friendID = getID(friendName);
-    if (friendID){   
-        console.log("got userID");
+
+    if (friend){   
         if (!checkFriend(userName, friendName)){
-            console.log("not currently friends");
             try {
                 stmt.run({
                     "userName": userName, 
@@ -204,8 +183,8 @@ function requestFriend(userName, friendName){
                 console.error(err);
                 return;
             }
-            const friendEmail = getEmail(friendID);
-            sendFriendReq (friendEmail);
+            const friendEmail = friend.userEmail;
+            sendFriendReqEmail (friendEmail);
             
         } else success = false;
     }
@@ -281,7 +260,7 @@ module.exports = {
     createUser,
     getUserByUsername,
     deleteUserByUsername,
-    addStrike,
+    reportUser,
     requestFriend,
     acceptRequest
 }

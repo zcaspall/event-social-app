@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS Friends (
    PRIMARY KEY (userName, friendName)
   );
 
-CREATE TABLE IF NOT EXISTS StrikedUsers (
+CREATE TABLE IF NOT EXISTS ReportedUsers (
    userID TEXT,
-   strikedID  TEXT,
-   PRIMARY KEY (userID, strikedID)
+   reportedID  TEXT,
+   PRIMARY KEY (userID, reportedID)
   );
