@@ -10,6 +10,7 @@ const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
 
 app.set('view engine', 'ejs');
+
 app.use(express.static("public", {
     index: "index.html",
     extensions: ['html']
@@ -25,5 +26,47 @@ app.delete("/users/:userName", userController.deleteUserByName);
 //event endpoints
 app.post("/events", eventController.createEvent);
 app.get("/events", eventController.getByKeyword);
+
+app.post("/report", (req, res) =>{
+    if(!req.body.userName || !req.body.strikedName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, strikedName} = req.body;
+    
+    const success = userModel.addStrike(userName, strikedName);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+});
+
+app.post("/friend", (req, res) =>{
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, friendName} = req.body;
+    
+    const success = userModel.requestFriend(userName, friendName);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+});
+
+app.post("/accept", (req, res) =>{
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, friendName} = req.body; 
+    userModel.acceptRequest(userName, friendName);
+
+    res.sendStatus(200);
+});
+
 
 module.exports = app;

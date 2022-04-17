@@ -30,10 +30,11 @@ CREATE TABLE IF NOT EXISTS UsersGoingTo (
    PRIMARY KEY (userID, eventName)
   );
 
-CREATE TABLE IF NOT EXISTS FriendsWith (
-   userID TEXT,
-   friendID  TEXT,
-   PRIMARY KEY (userID, friendID)
+CREATE TABLE IF NOT EXISTS Friends (
+   userName TEXT,
+   friendName  TEXT,
+   accepted BOOLEAN DEFAULT FALSE,
+   PRIMARY KEY (userName, friendName)
   );
 
 CREATE TABLE IF NOT EXISTS StrikedUsers (
