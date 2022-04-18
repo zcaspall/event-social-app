@@ -25,8 +25,12 @@ app.use(express.static("public", {index: "index.html", extensions: ["html"]}));
 
 app.use(express.urlencoded({extended: false}));
 
+// Load Controllers
 const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
+
+// Load validators
+const { RedisClient } = require("redis");
 
 app.set('view engine', 'ejs');
 app.use(express.static("public", {
