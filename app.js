@@ -24,6 +24,6 @@ app.delete("/users/:userName", userController.deleteUserByName);
 
 //event endpoints
 app.post("/events", eventController.createEvent);
-app.get("/events", eventController.getByKeyword);
+app.get("/events", eventController.getSearchResultsByKeyword);
 
 module.exports = app;

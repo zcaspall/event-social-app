@@ -6,14 +6,15 @@ const crypto = require ("crypto");
 function addNewEvent(eventName, eventDate, locationName, zip, lat, long,){
     const uuid = crypto.randomUUID();
     const sql = `INSERT INTO Events
-                    (eventID, eventName, eventDate, locationName, zipcode, latitude, longitude)
+                    (eventID, hostID, eventName, eventDate, locationName, zipcode, latitude, longitude)
                 VALUES
-                    (@eventID, @eventName, @eventDate, @locationName, @zipcode, @latitude, @longitude)`;
+                    (@eventID, @hostID, @eventName, @eventDate, @locationName, @zipcode, @latitude, @longitude)`;
     const stmt = db.prepare(sql);
 
     try{
         stmt.run({
             "eventID": uuid,
+            // "hostID": retrieves the user ID of the person who made the event
             "eventName": eventName,
             "eventDate": eventDate,
             "locationName": locationName,
