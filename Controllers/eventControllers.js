@@ -1,5 +1,8 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
+const multer = require("multer");
+
+const eventImages = multer({ dest: "eventImages/"});
 
 async function createEvent(req, res){
     const {eventName, eventDate, locationName, zipcode, latitude, longitude} = req.body;
@@ -18,7 +21,15 @@ function getSearchResultsByKeyword(req, res){
     res.render("searchResults", {events});
 }
 
+function uploadEventPics(req, res){
+    eventImages.array("eventImages");
+    console.log(req.files);
+    console.log(req.body);
+    res.sendStatus(200);
+}
+
 module.exports = { 
     createEvent,
     getSearchResultsByKeyword,
+    uploadEventPics,
 }
