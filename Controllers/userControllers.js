@@ -17,10 +17,6 @@ async function createNewUser(req, res){
 }
 
 async function loginUser(req, res){
-    if (!req.body.userName || !req.body.userPassword) {
-        return res.sendStatus(400);
-    }
-
     const {userName, userPassword} = req.body;
 
     const user = userModels.getUserByUsername(userName);
@@ -29,12 +25,24 @@ async function loginUser(req, res){
         return res.sendStatus(400);
     }
 
-    const { userPasswordHash } = user;
+    const { userPasswordHash, userID } = user;
 
     if (await argon2.verify(userPasswordHash, userPassword)) {
-        res.sendStatus(200);
+        req.session.regenerate((err) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+            
+            req.session.user = {};
+            req.session.user.userName = userName;
+            req.session.user.userID = userID;
+            req.session.isLoggedIn = true;
+            
+            res.sendStatus(200);
+        });
     } else { 
-        res.sendStatus(400);
+        return res.sendStatus(400);
     }
 }
 

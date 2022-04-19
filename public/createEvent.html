@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Event</title>
+    <script src="./js/createEvent.js" defer></script>
 </head>
 <body>
     <form action="/api/createEvent" method="post" id="createEventForm">
@@ -12,11 +13,17 @@
         <input type="text" name="eventName" id="eventName">
         <label for="eventDate">Event Date</label>
         <input type="datetime" name="eventDate" id="eventDate">
+        <label for="eventImages">Event Images</label>
+        <input type="file" id="eventImages" name="eventImages" accept="image/*">
+        <div class="location-container" id="location-container">
+            <label for="eventLocation">Event Location</label>
+            <input type="text" name="eventLocation" id="eventLocation">
+            <div id="autocomplete-container"></div>
+        </div>
         <label for="eventDescription">Event Description</label>
         <textarea name="eventDescription" id="eventDescription">
             Event Description...
         </textarea>
-        <div class="locationContainer" id="locationContainer"></div>
         <button type="submit">Create Event</button>
     </form>
 </body>

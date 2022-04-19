@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS Users (
     strikes INTEGER DEFAULT 0
 );
 
-
 -- Event tables
 CREATE TABLE IF NOT EXISTS Events (
     eventId TEXT UNIQUE PRIMARY KEY,
@@ -16,19 +15,25 @@ CREATE TABLE IF NOT EXISTS Events (
     eventName TEXT(20) NOT NULL,
     eventDescription TEXT(200),
     eventDate TEXT(20) NOT NULL,
-    locationName TEXT(20),
+    locationName TEXT(100) NOT NULL,
     zipcode INT NOT NULL,
     latitude INT NOT NULL,
     longitude INT NOT NULL
 );
 
--- Relations
+-- Image Table
+CREATE TABLE IF NOT EXISTS Images (
+    imageId TEXT UNIQUE PRIMARY KEY,
+    eventId TEXT NOT NULL REFERENCES Events(eventId),
+    imagePath TEXT(100) NOT NULL
+);
 
+-- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,
-   eventName  TEXT(30),
+   eventName TEXT(30),
    PRIMARY KEY (userID, eventName)
-  );
+);
 
 CREATE TABLE IF NOT EXISTS Friends (
    userName TEXT,
