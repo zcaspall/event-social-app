@@ -49,8 +49,13 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
+function uploadProfilePic(req, res){
+    
+}
+
 module.exports = {
     createNewUser,
     loginUser,
-    deleteUserByName
+    deleteUserByName,
+    uploadProfilePic,
 }
