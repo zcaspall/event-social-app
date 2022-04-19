@@ -2,8 +2,17 @@
 const eventModels = require("../Models/eventModels");
 const multer = require("multer");
 
-const eventImages = multer({ dest: "eventImages/"});
+ const eventImages = multer({ dest: "eventImages/"});
 
+// const fileStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, "./public/images")
+//     },
+//     filename: (req,file, cb) => {
+//         cb(null, file.originalname)
+//     },
+// });
+ 
 async function createEvent(req, res){
     const {eventName, eventDate, locationName, zipcode, latitude, longitude} = req.body;
 
@@ -20,6 +29,11 @@ function getSearchResultsByKeyword(req, res){
 
     res.render("searchResults", {events});
 }
+
+
+// Event Photos
+
+//const eventUpload = multer({storage: fileStorage});
 
 function uploadEventPics(req, res){
     eventImages.array("eventImages");
