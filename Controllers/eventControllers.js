@@ -2,13 +2,19 @@
 const eventModels = require("../Models/eventModels");
 
 async function createEvent(req, res){
-    const {eventName, eventDate, locationName, zipcode, latitude, longitude} = req.body;
-
-    if(!req.body.eventName || !req.body.eventDate || !req.body.locationName || !req.body.zipcode || !req.body.latitude || !req.body.longitude){
-       return res.sendStatus(400)
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.sendStatus(403);
     }
+    const hostId = user.userID;
+    const {eventName, eventDate, eventDescription} = req.body;
+    const eventLocation = JSON.parse(req.body.eventLocation);
 
-    await eventModels.addNewEvent(eventName, eventDate, locationName, zipcode, latitude, longitude);
+    const locationName = eventLocation.properties.formatted;
+    const lattitude = eventLocation.properties.lat;
+    const longitude = eventLocation.properties.lon;
+
+    await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription);
     res.sendStatus(200);
 }
 
