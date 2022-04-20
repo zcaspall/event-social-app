@@ -1,6 +1,7 @@
 "use strict";
 const userModels = require("../Models/userModels");
 const argon2 = require("argon2");
+const multer = require("multer");
 
 async function createNewUser(req, res){
     
@@ -49,9 +50,39 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
+//Profile Pictures
+
+const fileStorage = multer.diskStorage({
+        destination: function (req,file,cb){
+            cb(null, './profilePictures');
+        },
+        filename: function (req, file, cb){
+            cb(null, file.originalname);
+        },
+
+    // fileFilter(req, file, cb){
+    //     // ask saldivar for the session role
+    //     if(!req.session /*&& req.session.role !== */){
+    //         return cb(null, false);
+    //     }
+    //     if(file.mimetype.startsWith("image/")){
+    //         return cb(null, true);
+    //     }
+    //     else{
+    //         return cb(null, false);
+    //     }
+    // },
+});
+
+const upload = multer({ storage: fileStorage });
+
 function uploadProfilePic(req, res){
-    
+    upload.single("profilePicture");
+    console.log(req.file);
+    console.log(req.body);
+    res.send("File uploaded");
 }
+    
 
 module.exports = {
     createNewUser,

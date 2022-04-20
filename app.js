@@ -20,10 +20,12 @@ app.use(express.json({limit: '200kb'}));
 // user endpoints
 app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
+app.post("/profile", userController.uploadProfilePic);
 app.delete("/users/:userName", userController.deleteUserByName);
 
 //event endpoints
 app.post("/events", eventController.createEvent);
 app.get("/events", eventController.getSearchResultsByKeyword);
+
 
 module.exports = app;
