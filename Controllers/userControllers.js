@@ -9,17 +9,15 @@ async function createNewUser(req, res){
     if(!req.body.userName || !req.body.userPassword
         || !req.body.userEmail || !req.body.userPhone){
         return res.sendStatus(400);
-    }
-    else{
+    } else {
         await userModels.createUser(userName, userPassword, userEmail, userPhone);
-        res.sendStatus(201);
+        res.redirect("/");
     }
 }
 
 async function loginUser(req, res){
-    const {userName, userPassword} = req.body;
-
-    const user = userModels.getUserByUsername(userName);
+    const {username, password} = req.body;
+    const user = userModels.getUserByUsername(username);
 
     if (!user) {
         return res.sendStatus(400);
@@ -27,7 +25,7 @@ async function loginUser(req, res){
 
     const { userPasswordHash, userID } = user;
 
-    if (await argon2.verify(userPasswordHash, userPassword)) {
+    if (await argon2.verify(userPasswordHash, password)) {
         req.session.regenerate((err) => {
             if (err) {
                 console.error(err);
@@ -35,13 +33,14 @@ async function loginUser(req, res){
             }
             
             req.session.user = {};
-            req.session.user.userName = userName;
+            req.session.user.userName = username;
             req.session.user.userID = userID;
             req.session.isLoggedIn = true;
             
-            res.sendStatus(200);
+            res.redirect("/main");
         });
     } else { 
+        console.log("test");
         return res.sendStatus(400);
     }
 }
