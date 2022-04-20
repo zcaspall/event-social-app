@@ -3,23 +3,24 @@ const db = require("./db");
 const crypto = require ("crypto");
 
 // the users create the events
-function addNewEvent(eventName, eventDate, locationName, zip, lat, long,){
+function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, eventDescription){
     const uuid = crypto.randomUUID();
     const sql = `INSERT INTO Events
-                    (eventID, eventName, eventDate, locationName, zipcode, latitude, longitude)
+                    (eventId, hostId, eventName, eventDate, locationName, latitude, longitude, eventDescription)
                 VALUES
-                    (@eventID, @eventName, @eventDate, @locationName, @zipcode, @latitude, @longitude)`;
+                    (@eventId, @hostId, @eventName, @eventDate, @locationName, @latitude, @longitude, @eventDescription)`;
     const stmt = db.prepare(sql);
 
     try{
         stmt.run({
-            "eventID": uuid,
+            "eventId": uuid,
+            "hostId": hostId,
             "eventName": eventName,
             "eventDate": eventDate,
             "locationName": locationName,
-            "zipcode": zip,
             "latitude": lat,
             "longitude": long,
+            "eventDescription": eventDescription,
         });
     }
     catch(err){

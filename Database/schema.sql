@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS Events (
     eventDescription TEXT(200),
     eventDate TEXT(20) NOT NULL,
     locationName TEXT(100) NOT NULL,
-    zipcode INT NOT NULL,
     latitude INT NOT NULL,
     longitude INT NOT NULL
 );
