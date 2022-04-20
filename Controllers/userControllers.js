@@ -53,11 +53,11 @@ function deleteUserByName(req, res){
 //Profile Pictures
 
 const fileStorage = multer.diskStorage({
-        destination: function (req,file,cb){
-            cb(null, './profilePictures');
+        destination: (req, file, cb) => {
+            cb(null, '../profilePictures');
         },
-        filename: function (req, file, cb){
-            cb(null, file.originalname);
+        filename: (req, file, cb) => {
+            cb(null, Date.now() + "--" + file.originalname);
         },
 
     // fileFilter(req, file, cb){
