@@ -37,7 +37,7 @@ async function loginUser(req, res){
             req.session.user.userID = userID;
             req.session.isLoggedIn = true;
             
-            res.redirect("/main");
+            res.redirect(`/:${userID}`);
         });
     } else { 
         console.log("test");

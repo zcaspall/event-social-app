@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Users (
 -- Event tables
 CREATE TABLE IF NOT EXISTS Events (
     eventId TEXT UNIQUE PRIMARY KEY,
-    hostId TEXT NOT NULL UNIQUE REFERENCES Users(userID),
+    hostId TEXT NOT NULL REFERENCES Users(userID),
     eventName TEXT(20) NOT NULL,
     eventDescription TEXT(200),
     eventDate TEXT(20) NOT NULL,
@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS Images (
 -- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,
-   eventName TEXT(30),
-   PRIMARY KEY (userID, eventName)
+   eventId TEXT,
+   PRIMARY KEY (userID, eventId)
 );
 
 CREATE TABLE IF NOT EXISTS Friends (

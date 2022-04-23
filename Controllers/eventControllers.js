@@ -1,5 +1,19 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
+const multer = require("multer");
+
+const eventImages = multer({ dest: "./public/images/events" });
+
+function renderMain (req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.sendStatus(403);
+    }
+    const hostId = user.userID;
+    const events = eventModels.getEventsByHost(hostId);
+
+    res.render("mainPage", {events});
+}
 
 async function createEvent(req, res){
     const { user, isLoggedIn } = req.session;
@@ -13,9 +27,8 @@ async function createEvent(req, res){
     const locationName = eventLocation.properties.formatted;
     const lattitude = eventLocation.properties.lat;
     const longitude = eventLocation.properties.lon;
-
     await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription);
-    res.sendStatus(200);
+    res.redirect(`/:${user.userID}`);
 }
 
 function getSearchResultsByKeyword(req, res){
@@ -25,6 +38,7 @@ function getSearchResultsByKeyword(req, res){
 }
 
 module.exports = { 
+    renderMain,
     createEvent,
     getSearchResultsByKeyword,
 }

@@ -4,6 +4,13 @@ const crypto = require ("crypto");
 
 // the users create the events
 function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, eventDescription){
+    // console.log(hostId);
+    // console.log(eventName);
+    // console.log(eventDate);
+    // console.log(locationName);
+    // console.log(lat);
+    // console.log(long);
+    // console.log(eventDescription);
     const uuid = crypto.randomUUID();
     const sql = `INSERT INTO Events
                     (eventId, hostId, eventName, eventDate, locationName, latitude, longitude, eventDescription)
@@ -69,8 +76,30 @@ function getEventsByLocation(coordinates, radius, inMiles=true) {
     });
 };
 
+function getEventsByHost(hostId) {
+    const sql = `SELECT * FROM Events WHERE hostId = @hostId`;
+
+    const stmt = db.prepare(sql);
+
+    return stmt.all({hostId});
+};
+
+function getEventsAttendedByUser(userId) {
+    const sql = `SELECT * FROM Events 
+                WHERE eventId IN (
+                    SELECT eventId FROM UsersGoingTo 
+                    WHERE userId = @userId
+                )`;
+    
+    const stmt = db.prepare(sql);
+
+    return stmt.all({userId});
+};
+
 module.exports = {
     addNewEvent,
     getEventsByKeyword,
     getEventsByLocation,
+    getEventsByHost,
+    getEventsAttendedByUser,
 };

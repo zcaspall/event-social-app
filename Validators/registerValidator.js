@@ -11,21 +11,29 @@ const validateOpts ={
 };
 
 const registerSchema = joi.object({
-    username: joi.string()
+    userName: joi.string()
                  .min(3)
                  .token()
                  .lowercase()
                  .required(),
     
-    password: joi.string()
+    userPassword: joi.string()
                  .min(6)
                  .required(),
     
-    email: joi.string()
+    confirmPassword: joi.string()
+                    .min(6)
+                    .required()
+                    .valid(joi.ref('userPassword')),
+    
+    userEmail: joi.string()
               .email()
               .required(),
     
-    phone: joi.string()
+    userDOB: joi.date()
+            .required(),
+    
+    userPhone: joi.string()
               .length(10)
               .pattern(/^[0-9]+$/)
               .required(),

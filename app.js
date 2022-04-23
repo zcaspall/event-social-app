@@ -30,6 +30,9 @@ const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
 
 // Load validators
+const loginValidator = require("./Validators/loginValidator");
+const registerValidator = require("./Validators/registerValidator");
+const eventValidator = require("./Validators/eventValidator");
 const { RedisClient } = require("redis");
 
 app.set('view engine', 'ejs');
@@ -41,9 +44,10 @@ app.use(express.static("public", {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json({limit: '200kb'}));
 
+app.get("/:userId", eventController.renderMain);
 // user endpoints
-app.post("/register", userController.createNewUser);
-app.post("/login", userController.loginUser);
+app.post("/register",registerValidator.validateRegisterBody, userController.createNewUser);
+app.post("/login", loginValidator.validateLoginBody, userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 app.post("/friend", userController.sendFriendRequest);
 app.post("/report", userController.sendUserReport);
