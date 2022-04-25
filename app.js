@@ -23,7 +23,7 @@ app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
 
 app.post("/profile", 
-  userController.upload.single("profilePicture"),  // The multer middleware will attach the `file` object to the `req` object
+  userController.upload.single("Picture"),  // The multer middleware will attach the `file` object to the `req` object
   userController.uploadProfilePic);
 
 app.delete("/users/:userName", userController.deleteUserByName);

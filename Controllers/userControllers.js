@@ -53,15 +53,13 @@ function deleteUserByName(req, res){
 //Profile Pictures
 const path = require("path");
 
-const path = require("path");
-
 const fileStorage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, path.resolve(global.projectRoot, "profilePictures")); // Now it's always pathed relative to the project root 
-        },
-        filename: (req, file, cb) => {
-            cb(null, Date.now() + "--" + file.originalname);
-        },
+    destination: (req, file, cb) => {
+        cb(null, './profilePictures');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "--" + file.originalname);
+    },
 
     // fileFilter(req, file, cb){
     //     // ask saldivar for the session role
@@ -83,7 +81,7 @@ function uploadProfilePic(req, res){
     console.log(req.file);
     console.log(req.body);
     if(!req.file){
-        return res.sendStatus(400);
+        return res.send(":,)");
     }
     res.send("File uploaded");
 }
