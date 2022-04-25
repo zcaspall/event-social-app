@@ -17,10 +17,16 @@ app.use(express.static("public", {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json({limit: '200kb'}));
 
+
+
 // user endpoints
 app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
-app.post("/profile", userController.uploadProfilePic);
+
+app.post("/profile", 
+  userController.upload.single("profilePicture"),  // The multer middleware will attach the `file` object to the `req` object
+  userController.uploadProfilePic);
+
 app.delete("/users/:userName", userController.deleteUserByName);
 
 //event endpoints
