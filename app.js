@@ -18,7 +18,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json({limit: '200kb'}));
 
 
-
 // user endpoints
 app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);

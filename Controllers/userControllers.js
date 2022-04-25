@@ -53,6 +53,8 @@ function deleteUserByName(req, res){
 //Profile Pictures
 const path = require("path");
 
+const path = require("path");
+
 const fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, path.resolve(global.projectRoot, "profilePictures")); // Now it's always pathed relative to the project root 
@@ -80,6 +82,9 @@ const upload = multer({ storage: fileStorage });
 function uploadProfilePic(req, res){
     console.log(req.file);
     console.log(req.body);
+    if(!req.file){
+        return res.sendStatus(400);
+    }
     res.send("File uploaded");
 }
     
