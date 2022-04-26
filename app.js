@@ -28,7 +28,7 @@ const multer = require("multer");
 
 const fileStorage = multer.diskStorage({
       destination: (req, file, cb) => {
-          cb(null, "./profilePictures");
+          cb(null, "./public/profilePictures");
       },
       filename: (req, file, cb) => {
           cb(null, Date.now() + "--" + file.originalname);
