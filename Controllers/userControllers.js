@@ -1,7 +1,7 @@
 "use strict";
 const userModels = require("../Models/userModels");
 const argon2 = require("argon2");
-const multer = require("multer");
+
 
 async function createNewUser(req, res){
     
@@ -51,15 +51,15 @@ function deleteUserByName(req, res){
 }
 
 //Profile Pictures
-const path = require("path");
+// const path = require("path");
 
-const fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './profilePictures');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "--" + file.originalname);
-    },
+// const fileStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, './profilePictures');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + "--" + file.originalname);
+//     },
 
     // fileFilter(req, file, cb){
     //     // ask saldivar for the session role
@@ -73,24 +73,24 @@ const fileStorage = multer.diskStorage({
     //         return cb(null, false);
     //     }
     // },
-});
+// });
 
-const upload = multer({ storage: fileStorage });
+// const upload = multer({ storage: fileStorage });
 
-function uploadProfilePic(req, res){
-    console.log(req.file);
-    console.log(req.body);
-    if(!req.file){
-        return res.send(":,)");
-    }
-    res.send("File uploaded");
-}
+// function uploadProfilePic(req, res){
+//     console.log(req.file);
+//     console.log(req.body);
+//     if(!req.file){
+//         return res.send(":,)");
+//     }
+//     res.send("File uploaded");
+// }
     
 
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
-    uploadProfilePic,
-    upload,
+    // uploadProfilePic,
+    // upload,
 }

@@ -1,10 +1,11 @@
 "use strict";
 require("dotenv").config();
 
-const argon2 = require("argon2");
+// const argon2 = require("argon2");
 const express = require("express");
 const res = require("express/lib/response");
 const app = express();
+
 
 const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
@@ -22,9 +23,30 @@ app.use(express.json({limit: '200kb'}));
 app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
 
-app.post("/profile", 
-  userController.upload.single("Picture"),  // The multer middleware will attach the `file` object to the `req` object
-  userController.uploadProfilePic);
+
+const multer = require("multer");
+
+const fileStorage = multer.diskStorage({
+      destination: (req, file, cb) => {
+          cb(null, "./profilePictures");
+      },
+      filename: (req, file, cb) => {
+          cb(null, Date.now() + "--" + file.originalname);
+      },
+});
+
+const upload = multer({ storage: fileStorage });
+
+app.post("/profile", upload.single("picture"), (req, res) => {
+  console.log(req.file);
+  res.send("File uploaded");
+});
+
+
+
+// app.post("/profile", 
+//   userController.upload.single("Picture"),  // The multer middleware will attach the `file` object to the `req` object
+//   userController.uploadProfilePic);
 
 app.delete("/users/:userName", userController.deleteUserByName);
 
