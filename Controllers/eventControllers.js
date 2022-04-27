@@ -1,8 +1,5 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
-const multer = require("multer");
-
-const eventImages = multer({ dest: "./public/images/events" });
 
 function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
@@ -15,7 +12,8 @@ function renderMain (req, res) {
     res.render("mainPage", {events});
 }
 
-async function createEvent(req, res){
+async function createEvent(req, res, next){
+    console.log(req.file);
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
         return res.sendStatus(403);
@@ -28,7 +26,9 @@ async function createEvent(req, res){
     const lattitude = eventLocation.properties.lat;
     const longitude = eventLocation.properties.lon;
     await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription);
-    res.redirect(`/:${user.userID}`);
+
+    console.log("test");
+    res.redirect(`/`);
 }
 
 function getSearchResultsByKeyword(req, res){

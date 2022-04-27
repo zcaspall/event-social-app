@@ -4,9 +4,6 @@ const addressInput = document.getElementById("eventLocation");
 
 addressInput.addEventListener("input", (e) => {
   const currentValue = e.target.value;
-  
-  closeDropDownList();
-  closeDropDownList();
 
   if (currentValue.length < 3) {
     return;
@@ -20,6 +17,9 @@ addressInput.addEventListener("input", (e) => {
       try {
         const data = await response.json();
         
+        if (document.getElementById("autocomplete-container")) {
+          closeDropDownList();
+        }
         const autoCompleteContainer = document.createElement("ul");
         autoCompleteContainer.setAttribute("id", "autocomplete-container");
         document.getElementById("location-container").appendChild(autoCompleteContainer);
@@ -48,7 +48,7 @@ addressInput.addEventListener("input", (e) => {
 
   };
   
-  getAddress();
+  setTimeout(getAddress(), 1000);
 
 });
 
@@ -58,39 +58,39 @@ function closeDropDownList() {
   }
 }
 
-const form = document.getElementById("createEventForm");
+// const form = document.getElementById("createEventForm");
 
-form.addEventListener("submit", submitCreateEventForm);
+// form.addEventListener("submit", submitCreateEventForm);
 
-async function submitCreateEventForm (event) {
-  event.preventDefault();
+// async function submitCreateEventForm (event) {
+//   event.preventDefault();
   
-  const body = getInputs();
+//   const body = getInputs();
 
-  try {
-    const response = await fetch("/events", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
+//   try {
+//     const response = await fetch("/events", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify(body)
+//     });
 
-    if (response.ok) {
-      try {
-        const data = await response.json();
-      } catch (e) {
-        console.error("Failed to parse json response");
-      }
-    } else {
-      if (response.status === 400) {
-        const data = await response.json();
-      }
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
+//     if (response.ok) {
+//       try {
+//         const data = await response.json();
+//       } catch (e) {
+//         console.error("Failed to parse json response");
+//       }
+//     } else {
+//       if (response.status === 400) {
+//         const data = await response.json();
+//       }
+//     }
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
 
 function getInputs () {
   const eventName = document.getElementById("eventName").value;
