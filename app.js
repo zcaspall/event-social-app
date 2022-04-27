@@ -26,7 +26,7 @@ app.post("/login", userController.loginUser);
 
 const multer = require("multer");
 
-const fileStorage = multer.diskStorage({
+const profileStorage = multer.diskStorage({
       destination: (req, file, cb) => {
           cb(null, "./public/profilePictures");
       },
@@ -35,7 +35,7 @@ const fileStorage = multer.diskStorage({
       },
 });
 
-const upload = multer({ storage: fileStorage });
+const upload = multer({ storage: profileStorage });
 
 app.post("/profile", upload.single("picture"), (req, res) => {
   console.log(req.file);
