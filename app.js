@@ -9,7 +9,7 @@ const multer = require("multer");
 const app = express();
 
 // Multer
-const eventImages = multer({dest: 'eventImages/'});
+const eventImages = multer({dest: 'public/images/eventImages/'});
 
 const sessionConfig = {
     store: new RedisStore({ client: redis.createClient() }),
@@ -60,9 +60,7 @@ app.post("/report", userController.sendUserReport);
 app.post("/accept", userController.acceptFriendRequest);
 
 //event endpoints
-app.post("/events", eventImages.single('file'), (req, res) => {
-    console.log(req.file);
-});
+app.post("/events", eventImages.single('file'), eventController.createEvent);
 app.get("/events", eventController.getSearchResultsByKeyword);
 
 module.exports = app;

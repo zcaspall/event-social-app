@@ -20,11 +20,11 @@ CREATE TABLE IF NOT EXISTS Events (
     longitude INT NOT NULL
 );
 
--- Image Table
-CREATE TABLE IF NOT EXISTS Images (
+-- Event Image Table
+CREATE TABLE IF NOT EXISTS EventImages (
     imageId TEXT UNIQUE PRIMARY KEY,
-    eventId TEXT NOT NULL REFERENCES Events(eventId),
-    imagePath TEXT(100) NOT NULL
+    parentEventId TEXT NOT NULL REFERENCES Events(eventId),
+    imagePath TEXT NOT NULL
 );
 
 -- Relations

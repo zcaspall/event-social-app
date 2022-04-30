@@ -3,23 +3,23 @@ const db = require("./db");
 const crypto = require ("crypto");
 
 // the users create the events
-function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, eventDescription){
-    // console.log(hostId);
-    // console.log(eventName);
-    // console.log(eventDate);
-    // console.log(locationName);
-    // console.log(lat);
-    // console.log(long);
-    // console.log(eventDescription);
+function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, eventDescription, imageId, imagePath){
     const uuid = crypto.randomUUID();
-    const sql = `INSERT INTO Events
+    const eventSql = `INSERT INTO Events
                     (eventId, hostId, eventName, eventDate, locationName, latitude, longitude, eventDescription)
                 VALUES
                     (@eventId, @hostId, @eventName, @eventDate, @locationName, @latitude, @longitude, @eventDescription)`;
-    const stmt = db.prepare(sql);
+    const eventStmt = db.prepare(eventSql);
+
+    const imageSql = `INSERT INTO EventImages
+                    (eventId, imageId, imagePath)
+                VALUES
+                    (@eventId, @imageId, @imagePath)`;
+
+    const imageStmt = db.prepare(imageSql);
 
     try{
-        stmt.run({
+        eventStmt.run({
             "eventId": uuid,
             "hostId": hostId,
             "eventName": eventName,
@@ -31,6 +31,16 @@ function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, even
         });
     }
     catch(err){
+        console.log(err);
+    }
+
+    try {
+        imageStmt.run({
+            "eventId": uuid,
+            "imageId": imageId,
+            "imagePath": imagePath,
+        });
+    } catch(err) {
         console.log(err);
     }
 };
@@ -77,7 +87,7 @@ function getEventsByLocation(coordinates, radius, inMiles=true) {
 };
 
 function getEventsByHost(hostId) {
-    const sql = `SELECT * FROM Events WHERE hostId = @hostId`;
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId WHERE hostId=@hostId`;
 
     const stmt = db.prepare(sql);
 
