@@ -63,7 +63,7 @@ function sendFriendRequest(req, res){
     if(!req.body.friendName){
         return res.sendStatus(400);
     }
-    const {friendName} = req.body;
+    let {friendName} = req.body;
     const userName = req.session.user.userName.toLowerCase();
     friendName = friendName.toLowerCase();
 
