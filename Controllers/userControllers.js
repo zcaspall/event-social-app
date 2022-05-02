@@ -17,8 +17,7 @@ async function createNewUser(req, res){
 }
 
 async function loginUser(req, res){
-    const {userName, userPassword} = req.body;
-
+    const {userName, password} = req.body;
     const user = userModels.getUserByUsername(userName);
 
     if (!user) {
@@ -27,7 +26,7 @@ async function loginUser(req, res){
 
     const { userPasswordHash, userID } = user;
 
-    if (await argon2.verify(userPasswordHash, userPassword)) {
+    if (await argon2.verify(userPasswordHash, password)) {
         req.session.regenerate((err) => {
             if (err) {
                 console.error(err);
@@ -59,11 +58,14 @@ function deleteUserByName(req, res){
 
 
 function sendFriendRequest(req, res){
-    if(!req.body.userName || !req.body.friendName){
+    if(!req.session.isLoggedIn)
+        return res.sendStatus(401);
+
+    if(!req.body.friendName){
         return res.sendStatus(400);
     }
-    let {userName, friendName} = req.body;
-    userName = userName.toLowerCase();
+    const {friendName} = req.body;
+    const userName = req.session.user.userName.toLowerCase();
     friendName = friendName.toLowerCase();
 
     const success = userModels.requestFriend(userName, friendName);
@@ -75,11 +77,14 @@ function sendFriendRequest(req, res){
 };
 
 function sendUserReport(req, res){
-    if(!req.body.userName || !req.body.reportedName){
+    if(!req.session.isLoggedIn)
+        return res.sendStatus(401);
+    if(!req.body.reportedName){
         return res.sendStatus(400);
     }
+    const userName = req.session.user.userName.toLowerCase();
 
-    const {userName, reportedName} = req.body;
+    const {reportedName} = req.body;
     
     const success = userModels.reportUser(userName, reportedName);
     if (!success){
