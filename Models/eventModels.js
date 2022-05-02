@@ -12,7 +12,7 @@ function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, even
     const eventStmt = db.prepare(eventSql);
 
     const imageSql = `INSERT INTO EventImages
-                    (eventId, imageId, imagePath)
+                    (parentEventId, imageId, imagePath)
                 VALUES
                     (@eventId, @imageId, @imagePath)`;
 
@@ -44,6 +44,14 @@ function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, even
         console.log(err);
     }
 };
+
+function getAllEvents() {
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId`;
+
+    const stmt = db.prepare(sql);
+
+    return stmt.all();
+}
 
 function getEventsByKeyword(keyword) {
     // Searches for event that contains keyword
@@ -108,8 +116,7 @@ function getEventsAttendedByUser(userId) {
 
 module.exports = {
     addNewEvent,
-    getEventsByKeyword,
-    getEventsByLocation,
+    getAllEvents,
     getEventsByHost,
     getEventsAttendedByUser,
 };

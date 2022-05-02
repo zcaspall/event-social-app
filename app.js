@@ -46,7 +46,7 @@ app.use(express.json({limit: '200kb'}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public", {
     index: "index.html",
-    extensions: ['html']
+    extensions: ['html', 'js', 'css', 'png', 'jpg', 'jpeg', 'gif']
 }));
 
 
@@ -61,6 +61,6 @@ app.post("/accept", userController.acceptFriendRequest);
 
 //event endpoints
 app.post("/events", eventImages.single('file'), eventController.createEvent);
-app.get("/events", eventController.getSearchResultsByKeyword);
+app.get("/events", eventController.renderEventPage);
 
 module.exports = app;

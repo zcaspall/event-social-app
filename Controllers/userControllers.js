@@ -40,7 +40,6 @@ async function loginUser(req, res){
             res.redirect(`/:${userID}`);
         });
     } else { 
-        console.log("test");
         return res.sendStatus(400);
     }
 }

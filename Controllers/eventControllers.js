@@ -7,16 +7,13 @@ function renderMain (req, res) {
         return res.sendStatus(403);
     }
     const hostId = user.userID;
-    const events = eventModels.getEventsByHost(hostId);
+    const hostedEvents = eventModels.getEventsByHost(hostId);
+    const attendedEvents = eventModels.getEventsAttendedByUser(hostId);
 
-    console.log(events);
-
-    res.render("mainPage", {events});
+    res.render("mainPage", {hostedEvents, attendedEvents});
 }
 
 async function createEvent(req, res, next){
-    console.log(req.file);
-
     const { path, filename } = req.file;
     const { user, isLoggedIn } = req.session;
 
@@ -32,9 +29,20 @@ async function createEvent(req, res, next){
     const lattitude = eventLocation.properties.lat;
     const longitude = eventLocation.properties.lon;
 
-    res.redirect(`/`);
+    res.redirect(`/:${hostId}`);
 
     await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
+}
+
+function renderEventPage(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.sendStatus(403);
+    }
+    console.log("test")
+    const events = eventModels.getAllEvents();
+
+    res.render("eventsPage", {events});
 }
 
 function getSearchResultsByKeyword(req, res){
@@ -46,5 +54,5 @@ function getSearchResultsByKeyword(req, res){
 module.exports = { 
     renderMain,
     createEvent,
-    getSearchResultsByKeyword,
+    renderEventPage,
 };

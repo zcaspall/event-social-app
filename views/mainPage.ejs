@@ -8,19 +8,38 @@
 </head>
 <body>
     <h2>Hosted Events</h2>
-    <% for (const event of events) { %>
-        <a href="/events/<%= event.eventId %>">
-            <div class="event-card">
-                <h2><%= event.eventName %></h2>
-                <img src="" alt="">
-                <p><%= event.eventDescription %></p>
-                <p><%= event.locationName %></p>
-                <p><%= event.eventDate %></p>
-            </div>
-        </a>
+    <% if (hostedEvents.length === 0) { %>
+        <p>No events found.</p>
+    <% } else { %>
+        <% for (const event of hostedEvents) { %>
+            <a href="/events/<%= event.eventId %>">
+                <div class="event-card">
+                    <h2><%= event.eventName %></h2>
+                    <img src="images/eventImages/<%= event.imageId %>">
+                    <p><%= event.eventDescription %></p>
+                    <p><%= event.locationName %></p>
+                    <p><%= event.eventDate %></p>
+                </div>
+            </a>
+        <% } %>
     <% } %>
     <a href="/createEvent">Host a new event</a>
     <h2>Attending</h2>
-    
+    <% if (attendedEvents.length === 0) { %>
+        <p>No events found.</p>
+    <% } else { %>
+        <% for (const event of attendedEvents) { %>
+            <a href="/events/<%= event.eventId %>">
+                <div class="event-card">
+                    <h2><%= event.eventName %></h2>
+                    <img src="images/eventImages/<%= event.imageId %>">
+                    <p><%= event.eventDescription %></p>
+                    <p><%= event.locationName %></p>
+                    <p><%= event.eventDate %></p>
+                </div>
+            </a>
+        <% } %>
+    <% } %>
+    <a href="/eventsPage">Find More Events</a>
 </body>
 </html>
