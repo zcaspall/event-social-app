@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events</title>
+</head>
+<body>
+    <h1>Events</h1>
+    <h2>Attended by Friends</h2>
+
+    <h2>Other Events</h2>
+    <% if (events.length === 0) { %>
+        <p>No events found.</p>
+    <% } else { %>
+        <% for (event in events) { %>
+            <a href="/events/<%= event.eventId %>">
+                <div class="event-card">
+                    <h2><%= event.eventName %></h2>
+                    <img src="images/eventImages/<%= event.imageId %>">
+                    <p><%= event.eventDescription %></p>
+                    <p><%= event.locationName %></p>
+                    <p><%= event.eventDate %></p>
+                </div>
+            </a>
+        <% } %>
+    <% } %>
+</body>
+</html>

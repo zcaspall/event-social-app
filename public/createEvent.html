@@ -8,20 +8,20 @@
     <script src="./js/createEvent.js" defer></script>
 </head>
 <body>
-    <form action="/api/createEvent" method="post" id="createEventForm">
+    <form action="/events" id="createEventForm" enctype="multipart/form-data" method="post">
         <label for="eventName">Event Name</label>
         <input type="text" name="eventName" id="eventName">
         <label for="eventDate">Event Date</label>
-        <input type="datetime" name="eventDate" id="eventDate">
+        <input type="date" name="eventDate" id="eventDate">
         <label for="eventImages">Event Images</label>
-        <input type="file" id="eventImages" name="eventImages" accept="image/*">
+        <input type="file" id="eventImages" name="file">
         <div class="location-container" id="location-container">
             <label for="eventLocation">Event Location</label>
             <input type="text" name="eventLocation" id="eventLocation">
-            <div id="autocomplete-container"></div>
+            <input type="hidden" name="eventLocationData" id="eventLocationData">
         </div>
         <label for="eventDescription">Event Description</label>
-        <textarea name="eventDescription" id="eventDescription">
+        <textarea name="eventDescription" id="eventDescription" form="createEventForm">
             Event Description...
         </textarea>
         <button type="submit">Create Event</button>

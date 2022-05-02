@@ -1,15 +1,48 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
 
-async function createEvent(req, res){
-    const {eventName, eventDate, locationName, zipcode, latitude, longitude} = req.body;
+function renderMain (req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.sendStatus(403);
+    }
+    const hostId = user.userID;
+    const hostedEvents = eventModels.getEventsByHost(hostId);
+    const attendedEvents = eventModels.getEventsAttendedByUser(hostId);
 
-    if(!req.body.eventName || !req.body.eventDate || !req.body.locationName || !req.body.zipcode || !req.body.latitude || !req.body.longitude){
-       return res.sendStatus(400)
+    res.render("mainPage", {hostedEvents, attendedEvents});
+}
+
+async function createEvent(req, res, next){
+    const { path, filename } = req.file;
+    const { user, isLoggedIn } = req.session;
+
+    if (!isLoggedIn) {
+        return res.sendStatus(403);
     }
 
-    await eventModels.addNewEvent(eventName, eventDate, locationName, zipcode, latitude, longitude);
-    res.sendStatus(200);
+    const hostId = user.userID;
+    const {eventName, eventDate, eventDescription} = req.body;
+    const eventLocation = JSON.parse(req.body.eventLocationData);
+
+    const locationName = eventLocation.properties.formatted;
+    const lattitude = eventLocation.properties.lat;
+    const longitude = eventLocation.properties.lon;
+
+    res.redirect(`/:${hostId}`);
+
+    await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
+}
+
+function renderEventPage(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.sendStatus(403);
+    }
+    console.log("test")
+    const events = eventModels.getAllEvents();
+
+    res.render("eventsPage", {events});
 }
 
 function getSearchResultsByKeyword(req, res){
@@ -19,6 +52,7 @@ function getSearchResultsByKeyword(req, res){
 }
 
 module.exports = { 
+    renderMain,
     createEvent,
-    getSearchResultsByKeyword,
-}
+    renderEventPage,
+};
