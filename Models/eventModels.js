@@ -3,16 +3,23 @@ const db = require("./db");
 const crypto = require ("crypto");
 
 // the users create the events
-function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, eventDescription){
+function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, eventDescription, imageId, imagePath){
     const uuid = crypto.randomUUID();
-    const sql = `INSERT INTO Events
+    const eventSql = `INSERT INTO Events
                     (eventId, hostId, eventName, eventDate, locationName, latitude, longitude, eventDescription)
                 VALUES
                     (@eventId, @hostId, @eventName, @eventDate, @locationName, @latitude, @longitude, @eventDescription)`;
-    const stmt = db.prepare(sql);
+    const eventStmt = db.prepare(eventSql);
+
+    const imageSql = `INSERT INTO EventImages
+                    (parentEventId, imageId, imagePath)
+                VALUES
+                    (@eventId, @imageId, @imagePath)`;
+
+    const imageStmt = db.prepare(imageSql);
 
     try{
-        stmt.run({
+        eventStmt.run({
             "eventId": uuid,
             "hostId": hostId,
             "eventName": eventName,
@@ -26,7 +33,25 @@ function addNewEvent(hostId, eventName, eventDate, locationName, lat, long, even
     catch(err){
         console.log(err);
     }
+
+    try {
+        imageStmt.run({
+            "eventId": uuid,
+            "imageId": imageId,
+            "imagePath": imagePath,
+        });
+    } catch(err) {
+        console.log(err);
+    }
 };
+
+function getAllEvents() {
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId`;
+
+    const stmt = db.prepare(sql);
+
+    return stmt.all();
+}
 
 function getEventsByKeyword(keyword) {
     // Searches for event that contains keyword
@@ -69,8 +94,29 @@ function getEventsByLocation(coordinates, radius, inMiles=true) {
     });
 };
 
+function getEventsByHost(hostId) {
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId WHERE hostId=@hostId`;
+
+    const stmt = db.prepare(sql);
+
+    return stmt.all({hostId});
+};
+
+function getEventsAttendedByUser(userId) {
+    const sql = `SELECT * FROM Events 
+                WHERE eventId IN (
+                    SELECT eventId FROM UsersGoingTo 
+                    WHERE userId = @userId
+                )`;
+    
+    const stmt = db.prepare(sql);
+
+    return stmt.all({userId});
+};
+
 module.exports = {
     addNewEvent,
-    getEventsByKeyword,
-    getEventsByLocation,
+    getAllEvents,
+    getEventsByHost,
+    getEventsAttendedByUser,
 };
