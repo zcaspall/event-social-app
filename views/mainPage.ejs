@@ -29,7 +29,7 @@
         <p>No events found.</p>
     <% } else { %>
         <% for (const event of attendedEvents) { %>
-            <a href="/events/<%= event.eventId %>">
+            <a href="events/<%= event.eventId %>">
                 <div class="event-card">
                     <h2><%= event.eventName %></h2>
                     <img src="images/eventImages/<%= event.imageId %>">
@@ -40,6 +40,6 @@
             </a>
         <% } %>
     <% } %>
-    <a href="/eventsPage">Find More Events</a>
+    <a href="/events">Find More Events</a>
 </body>
 </html>

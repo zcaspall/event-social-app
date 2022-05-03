@@ -4,6 +4,7 @@ const eventModels = require("../Models/eventModels");
 function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
+        res.redirect("/login");
         return res.sendStatus(403);
     }
     const hostId = user.userID;
@@ -18,6 +19,7 @@ async function createEvent(req, res, next){
     const { user, isLoggedIn } = req.session;
 
     if (!isLoggedIn) {
+        res.redirect("/login");
         return res.sendStatus(403);
     }
 
@@ -29,7 +31,7 @@ async function createEvent(req, res, next){
     const lattitude = eventLocation.properties.lat;
     const longitude = eventLocation.properties.lon;
 
-    res.redirect(`/:${hostId}`);
+    res.redirect("/");
 
     await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
 }
@@ -37,11 +39,10 @@ async function createEvent(req, res, next){
 function renderEventPage(req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
+        res.redirect("/login");
         return res.sendStatus(403);
     }
-    console.log("test")
     const events = eventModels.getAllEvents();
-
     res.render("eventsPage", {events});
 }
 

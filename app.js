@@ -25,10 +25,6 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 
-app.use(express.static("public", {index: "index.html", extensions: ["html"]}));
-
-
-
 // Load Controllers
 const userController = require("./Controllers/userControllers");
 const eventController = require("./Controllers/eventControllers");
@@ -43,15 +39,14 @@ const { func } = require("joi");
 app.set('view engine', 'ejs');
 
 app.use(express.json({limit: '200kb'}));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public", {
     index: "index.html",
-    extensions: ['html', 'js', 'css', 'png', 'jpg', 'jpeg', 'gif']
+    extensions: ['html', 'js', 'css', 'png', 'jpg', 'jpeg']
 }));
 
-
-app.get("/:userId", eventController.renderMain);
 // user endpoints
+app.get("/", eventController.renderMain);
 app.post("/register",registerValidator.validateRegisterBody, userController.createNewUser);
 app.post("/login", loginValidator.validateLoginBody, userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
