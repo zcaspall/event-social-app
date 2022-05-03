@@ -7,14 +7,24 @@
     <title>Events</title>
 </head>
 <body>
-    <h1>Events</h1>
-    <h2>Attended by Friends</h2>
+    <form action="/events?location=" method="get" id="search-form">
+        <input type="range" min="1" max="300" value="50" name="search-radius" id="radius">
+        <div id="radius-buttons">
+            <input type="radio" name="miles" id="radius-miles">
+            <label for="miles">Miles</label>
 
-    <h2>Other Events</h2>
+            <input type="radio" name="km" id="radius-km">
+            <label for="km">Kilometers</label>
+        </div>
+        <label for="search">Search:</label>
+        <input type="search" name="search" id="search-bar" value="Enter keyword or address...">
+        <button type="submit">Search</button>
+    </form>
+    <h1>Events</h1>
     <% if (events.length === 0) { %>
         <p>No events found.</p>
     <% } else { %>
-        <% for (event in events) { %>
+        <% for (const event of events) { %>
             <a href="/events/<%= event.eventId %>">
                 <div class="event-card">
                     <h2><%= event.eventName %></h2>
