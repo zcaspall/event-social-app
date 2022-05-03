@@ -57,11 +57,14 @@ function deleteUserByName(req, res){
 
 
 function sendFriendRequest(req, res){
-    if(!req.body.userName || !req.body.friendName){
+    if(!req.session.isLoggedIn)
+        return res.sendStatus(401);
+
+    if(!req.body.friendName){
         return res.sendStatus(400);
     }
-    let {userName, friendName} = req.body;
-    userName = userName.toLowerCase();
+    let {friendName} = req.body;
+    const userName = req.session.user.userName.toLowerCase();
     friendName = friendName.toLowerCase();
 
     const success = userModels.requestFriend(userName, friendName);
@@ -73,11 +76,14 @@ function sendFriendRequest(req, res){
 };
 
 function sendUserReport(req, res){
-    if(!req.body.userName || !req.body.reportedName){
+    if(!req.session.isLoggedIn)
+        return res.sendStatus(401);
+    if(!req.body.reportedName){
         return res.sendStatus(400);
     }
+    const userName = req.session.user.userName.toLowerCase();
 
-    const {userName, reportedName} = req.body;
+    const {reportedName} = req.body;
     
     const success = userModels.reportUser(userName, reportedName);
     if (!success){
