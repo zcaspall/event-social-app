@@ -49,9 +49,19 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
+function renderAccount(req, res){
+    const user = userModel.getUserByID(req.params.userID);
+
+    if(!user){
+        res.status(404);
+    }
+
+    res.render("accountPage", {"user": user})
+}
 
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
+    renderAccount
 }

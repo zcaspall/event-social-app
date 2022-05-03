@@ -54,5 +54,5 @@ function deleteUserByUsername (userName) {
 module.exports = {
     createUser,
     getUserByUsername,
-    deleteUserByUsername
+    deleteUserByUsername,
 }

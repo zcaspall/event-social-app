@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Users (
     userName TEXT(20) UNIQUE NOT NULL,
     userPasswordHash TEXT(50) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
-    userPhone INTEGER
+    userPhone INTEGER,
 );
 
 
