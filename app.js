@@ -33,6 +33,8 @@ const eventController = require("./Controllers/eventControllers");
 const loginValidator = require("./Validators/loginValidator");
 const registerValidator = require("./Validators/registerValidator");
 const eventValidator = require("./Validators/eventValidator");
+const reportValidator = require("./Validators/reportValidator");
+const friendValidator = require("./Validators/friendValidator");
 const { RedisClient } = require("redis");
 const { func } = require("joi");
 
@@ -50,8 +52,8 @@ app.get("/", eventController.renderMain);
 app.post("/register",registerValidator.validateRegisterBody, userController.createNewUser);
 app.post("/login", loginValidator.validateLoginBody, userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
-app.post("/friend", userController.sendFriendRequest);
-app.post("/report", userController.sendUserReport);
+app.post("/friend", friendValidator.validateRequestBody, userController.sendFriendRequest);
+app.post("/report", reportValidator.validateReportBody, userController.sendUserReport);
 app.post("/accept", userController.acceptFriendRequest);
 
 //event endpoints

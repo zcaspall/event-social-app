@@ -26,6 +26,25 @@ const requestHTML = (
   "</p>"
 );
 
+const joinText = (
+    "You've made an account on our Social App!\n\n"
+);
+
+const joinHTML = (
+    "<h1 style=\"margin-bottom: 1rem;\">You've made an account on our Social App!</h1>"
+);
+
+const reportedText = (
+    "You've been reported by another user.\n\nMight wanna be less of a garbage person at the next event you go to.\n"
+);
+
+const reportedHTML = (
+    "<h1 style=\"margin-bottom: 1rem;\">You've been reported by another user.</h1>" +
+  "<p>" +
+    "Might wanna be less of a garbage person at the next event you go to." +
+  "</p>"
+);
+
 /* Return's true if the email sent successfully and false otherwise */
 async function sendEmail (recipient, subject, text, html) {
     
@@ -49,6 +68,24 @@ async function sendEmail (recipient, subject, text, html) {
 	
 async function sendFriendReqEmail (to) {
     const emailSent = await sendEmail(to, "You have a friend request!", requestText, requestHTML);
+    if (emailSent) {
+      console.log("Email Sent to " + to);
+    } else {
+        console.log("Email Failed to Send");
+    }
+};
+
+async function sendJoinEmail (to) {
+    const emailSent = await sendEmail(to, "You joined our site!", joinText, joinHTML);
+    if (emailSent) {
+      console.log("Email Sent to " + to);
+    } else {
+        console.log("Email Failed to Send");
+    }
+};
+
+async function sendReportedEmail (to) {
+    const emailSent = await sendEmail(to, "Someone didn't like you!", reportedText, reportedHTML);
     if (emailSent) {
       console.log("Email Sent to " + to);
     } else {
@@ -81,6 +118,7 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     catch(err){
         console.error(err);
     }
+    sendJoinEmail(userEmail);
 };
 
 function getUserByUsername (userName) {
@@ -133,6 +171,8 @@ function reportUser(userName, reportedName){
         WHERE userID = @reportedID`;
         let stmt2 = db.prepare(sql2); 
         stmt2.run({reportedID});
+
+        sendReportedEmail(reportedUser.userEmail);
 
         success = true;
     }

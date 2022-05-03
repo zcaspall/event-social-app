@@ -1,6 +1,5 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
-
 function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
@@ -22,11 +21,9 @@ async function createEvent(req, res, next){
         res.redirect("/login");
         return res.sendStatus(403);
     }
-
     const hostId = user.userID;
     const {eventName, eventDate, eventDescription} = req.body;
     const eventLocation = JSON.parse(req.body.eventLocationData);
-
     const locationName = eventLocation.properties.formatted;
     const lattitude = eventLocation.properties.lat;
     const longitude = eventLocation.properties.lon;
@@ -51,7 +48,6 @@ function getSearchResultsByKeyword(req, res){
 
     res.render("searchResults", {events});
 }
-
 module.exports = { 
     renderMain,
     createEvent,
