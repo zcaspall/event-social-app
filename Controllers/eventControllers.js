@@ -5,7 +5,6 @@ function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
         res.redirect("/login");
-        return res.sendStatus(403);
     }
     const hostId = user.userID;
     const hostedEvents = eventModels.getEventsByHost(hostId);
@@ -20,7 +19,6 @@ async function createEvent(req, res, next){
 
     if (!isLoggedIn) {
         res.redirect("/login");
-        return res.sendStatus(403);
     }
 
     const hostId = user.userID;
@@ -40,7 +38,6 @@ function renderEventPage(req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
         res.redirect("/login");
-        return res.sendStatus(403);
     }
     const events = eventModels.getAllEvents();
     res.render("eventsPage", {events});
