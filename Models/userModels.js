@@ -126,9 +126,9 @@ function getUserByUsername (userName) {
 
     const stmt = db.prepare(sql);
     const record = stmt.get({
-        "userName": userName.toLowerCase()
+        "userName": userName,
     });
-
+    
     return record;
 }
 
