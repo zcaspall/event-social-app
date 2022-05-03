@@ -41,7 +41,6 @@ async function loginUser(req, res){
 
 function deleteUserByName(req, res){
     const { userName } = req.body;
-    // make it so it sends an error when the username is not found
     if(!userModels.getUserByUsername(userName)){
         return res.sendStatus(404);
     }
@@ -50,47 +49,9 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
-//Profile Pictures
-// const path = require("path");
-
-// const fileStorage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, './profilePictures');
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, Date.now() + "--" + file.originalname);
-//     },
-
-    // fileFilter(req, file, cb){
-    //     // ask saldivar for the session role
-    //     if(!req.session /*&& req.session.role !== */){
-    //         return cb(null, false);
-    //     }
-    //     if(file.mimetype.startsWith("image/")){
-    //         return cb(null, true);
-    //     }
-    //     else{
-    //         return cb(null, false);
-    //     }
-    // },
-// });
-
-// const upload = multer({ storage: fileStorage });
-
-// function uploadProfilePic(req, res){
-//     console.log(req.file);
-//     console.log(req.body);
-//     if(!req.file){
-//         return res.send(":,)");
-//     }
-//     res.send("File uploaded");
-// }
-    
 
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
-    // uploadProfilePic,
-    // upload,
 }

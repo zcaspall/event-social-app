@@ -9,7 +9,10 @@
 <body>
     <div class="row">
         <p><%= user.firstName + " " + user.lastName %></p>
-        <p><%= user.email %></p>
     </div>
+    <form action="/profile" method="post" enctype="multipart/form-data">
+        <input type="file" name="picture" id="picture">
+        <button>Upload</button>
+    </form>
 </body>
 </html>

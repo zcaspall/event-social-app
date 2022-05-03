@@ -42,12 +42,6 @@ app.post("/profile", upload.single("picture"), (req, res) => {
   res.send("File uploaded");
 });
 
-
-
-// app.post("/profile", 
-//   userController.upload.single("Picture"),  // The multer middleware will attach the `file` object to the `req` object
-//   userController.uploadProfilePic);
-
 app.delete("/users/:userName", userController.deleteUserByName);
 
 //event endpoints
