@@ -85,12 +85,22 @@ function deleteUserByName(req, res){
 //     }
 //     res.send("File uploaded");
 // }
-    
+
+function renderAccount(req, res){
+    const user = userModel.getUserByID(req.params.userID);
+
+    if(!user){
+        res.status(404);
+    }
+
+    res.render("accountPage", {"user": user})
+}
 
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
+    renderAccount,
     // uploadProfilePic,
     // upload,
 }

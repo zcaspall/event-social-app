@@ -20,9 +20,6 @@ app.use(express.json({limit: '200kb'}));
 
 
 // user endpoints
-app.post("/register", userController.createNewUser);
-app.post("/login", userController.loginUser);
-
 
 const multer = require("multer");
 
@@ -37,17 +34,19 @@ const profileStorage = multer.diskStorage({
 
 const upload = multer({ storage: profileStorage });
 
-app.post("/profile", upload.single("picture"), (req, res) => {
+app.post("/users/:userID/pfp", upload.single("picture"), (req, res) => {
   console.log(req.file);
   res.send("File uploaded");
 });
-
-
 
 // app.post("/profile", 
 //   userController.upload.single("Picture"),  // The multer middleware will attach the `file` object to the `req` object
 //   userController.uploadProfilePic);
 
+app.post("/register", userController.createNewUser);
+app.post("/login", userController.loginUser);
+
+app.get("/users/:userID", userController.renderAccount);
 app.delete("/users/:userName", userController.deleteUserByName);
 
 //event endpoints
