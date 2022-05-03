@@ -58,7 +58,7 @@ function deleteUserByName(req, res){
 
 function sendFriendRequest(req, res){
     if(!req.session.isLoggedIn)
-        return res.sendStatus(401);
+        res.redirect("/login");
 
     if(!req.body.friendName){
         return res.sendStatus(400);
@@ -77,7 +77,8 @@ function sendFriendRequest(req, res){
 
 function sendUserReport(req, res){
     if(!req.session.isLoggedIn)
-        return res.sendStatus(401);
+        res.redirect("/login");
+
     if(!req.body.reportedName){
         return res.sendStatus(400);
     }
@@ -94,6 +95,9 @@ function sendUserReport(req, res){
 };
 
 function acceptFriendRequest (req, res){
+    if(!req.session.isLoggedIn)
+        res.redirect("/login");
+        
     if(!req.body.userName || !req.body.friendName){
         return res.sendStatus(400);
     }
