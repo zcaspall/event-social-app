@@ -132,6 +132,17 @@ function getUserByUsername (userName) {
     return record;
 }
 
+function getUserByID (userID) {
+    const sql = `SELECT * FROM Users WHERE userID = @userID`;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userID": userID,
+    });
+    
+    return record;
+}
+
 function deleteUserByUsername (userName) {
     const sql = `DELETE FROM Users WHERE userName = @userName`;
 
@@ -201,23 +212,23 @@ function checkForStrikes(userID, reportedID){
     return previouslyStriked;
 };
 
-function requestFriend(userName, friendName){
-    const friend = getUserByUsername(userName);
+function requestFriend(userID, friendID){
+    const friend = getUserByID(friendID);
     let success = true;
 
     const sql = `
     INSERT INTO Friends
-        (userName, friendName)
+        (userID, friendID)
     VALUES
-        (@userName, @friendName)`;
+        (@userID, @friendID)`;
     const stmt = db.prepare(sql);
 
     if (friend){   
-        if (!checkFriend(userName, friendName)){
+        if (!checkFriend(userID, friendID)){
             try {
                 stmt.run({
-                    "userName": userName, 
-                    "friendName": friendName
+                    "userID": userID, 
+                    "friendID": friendID
                 });
             } catch (err) {
                 console.error(err);
@@ -231,21 +242,21 @@ function requestFriend(userName, friendName){
     return success;
 };
 
-function checkFriend(userName, friendName){
+function checkFriend(userID, friendID){
     let friendFirst = null;
     let userFirst;
     let alreadyRequested = false;
     const sql = `
         SELECT *
         FROM Friends
-        WHERE userName = @userName
-        AND friendName = @friendName`;
+        WHERE userID = @userID
+        AND friendID = @friendID`;
     
     const stmt = db.prepare(sql);
     try {
         userFirst = stmt.get({
-            "userName": userName, 
-            "friendName": friendName
+            "userID": userID, 
+            "friendID": friendID
         });
     } catch (err) {
         console.error(err);
@@ -254,8 +265,8 @@ function checkFriend(userName, friendName){
     
     try {
         friendFirst = stmt.get({
-            "userName": friendName, 
-            "friendName": userName
+            "userID": friendID, 
+            "friendID": userID
         });
     } catch (err) {
         console.error(err);
@@ -267,18 +278,18 @@ function checkFriend(userName, friendName){
     return alreadyRequested;
 };
 
-function acceptRequest(userName, friendName){
+function acceptRequest(userID, friendID){
     const sql = `
         UPDATE Friends
         SET accepted = 1
-        WHERE userName = @userName
-        AND friendName = @friendName`;
+        WHERE userID = @userID
+        AND friendID = @friendID`;
     
     const stmt = db.prepare(sql);
     try {
         stmt.run({
-            "userName": userName, 
-            "friendName": friendName
+            "userID": userID, 
+            "friendID": friendID
         });
     } catch (err) {
         console.error(err);
@@ -287,8 +298,8 @@ function acceptRequest(userName, friendName){
     
     try {
         stmt.run({
-            "userName": friendName, 
-            "friendName": userName
+            "userID": friendID, 
+            "friendID": userID
         });
     } catch (err) {
         console.error(err);
@@ -299,6 +310,7 @@ function acceptRequest(userName, friendName){
 module.exports = {
     createUser,
     getUserByUsername,
+    getUserByID,
     deleteUserByUsername,
     reportUser,
     requestFriend,
