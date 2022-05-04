@@ -10,10 +10,10 @@ function renderMain (req, res) {
     const hostedEvents = eventModels.getEventsByHost(hostId);
     const attendedEvents = eventModels.getEventsAttendedByUser(hostId);
 
-    res.render("mainPage", {hostedEvents, attendedEvents});
+    res.render("mainPage", {hostedEvents, attendedEvents, user});
 }
 
-async function createEvent(req, res, next){
+async function createEvent(req, res){
     const { path, filename } = req.file;
     const { user, isLoggedIn } = req.session;
 

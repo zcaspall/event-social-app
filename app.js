@@ -1,5 +1,6 @@
 "use strict";
 require("dotenv").config();
+const isProduction = process.env.NODE_ENV === "production";
 
 const redis = require("redis");
 const session = require("express-session");
@@ -37,6 +38,7 @@ const reportValidator = require("./Validators/reportValidator");
 const friendValidator = require("./Validators/friendValidator");
 const { RedisClient } = require("redis");
 const { func } = require("joi");
+const { notFoundHandler, productionErrorHandler } = require("./utils/errorHandler");
 
 app.set('view engine', 'ejs');
 
@@ -57,9 +59,17 @@ app.post("/report", reportValidator.validateReportBody, userController.sendUserR
 app.get("/accept/:userID", userController.acceptFriendRequest);
 
 //event endpoints
-app.post("/events", eventImages.single('file'), eventController.createEvent);
+app.post("/events", eventValidator.validateEventBody, eventImages.single('file'), eventController.createEvent);
 app.get("/events", eventController.renderEventPage);
 app.get("/events/:eventId", eventController.renderEvent);
 app.post("/join/:eventId", eventController.joinEvent);
+
+// 404 Handler
+app.use(notFoundHandler);
+
+// Production error handler
+if (isProduction) {
+    app.use(productionErrorHandler);
+}
 
 module.exports = app;
