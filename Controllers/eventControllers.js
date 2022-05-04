@@ -30,7 +30,7 @@ async function createEvent(req, res, next){
     const longitude = eventLocation.properties.lon;
 
     res.redirect("/");
-
+    
     await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
 }
 
@@ -43,13 +43,18 @@ function renderEventPage(req, res) {
     res.render("eventsPage", {events});
 }
 
-function searchEvents(req, res) {
-    return req.query.search;
+function renderEvent(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.redirect("/login");
+    }
+
+    const event = eventModels.getEventById(req.params.eventId);
 }
 
 module.exports = { 
     renderMain,
     createEvent,
     renderEventPage,
-    searchEvents
+    renderEvent
 };

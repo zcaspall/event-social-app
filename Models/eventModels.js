@@ -53,20 +53,6 @@ function getAllEvents() {
     return stmt.all();
 }
 
-function getEventsByKeyword(keyword) {
-    // Searches for event that contains keyword
-    const sql = `
-        SELECT * FROM Events
-        WHERE eventName LIKE '%' + @keyword '%'
-    `;
-    
-    const stmt = db.prepare(sql);
-
-    const events = stmt.all({keyword});
-    // will return events or undefined if none found
-    return events;
-};
-
 function getEventsByLocation(coordinates, radius, inMiles=true) {
     // Finds events within a radius of the provided location
     // this uses the lat and lng coordinates and the spherical law of cosines
@@ -114,9 +100,18 @@ function getEventsAttendedByUser(userId) {
     return stmt.all({userId});
 };
 
+function getEventById(eventId) {
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId WHERE eventId=@eventId`;
+
+    const stmt = db.prepare(sql);
+
+    return stmt.get({eventId});
+};
+
 module.exports = {
     addNewEvent,
     getAllEvents,
     getEventsByHost,
     getEventsAttendedByUser,
+    getEventById,
 };

@@ -35,10 +35,10 @@ CREATE TABLE IF NOT EXISTS UsersGoingTo (
 );
 
 CREATE TABLE IF NOT EXISTS Friends (
-   userName TEXT,
-   friendName  TEXT,
+   userID TEXT,
+   friendID  TEXT,
    accepted BOOLEAN DEFAULT FALSE,
-   PRIMARY KEY (userName, friendName)
+   PRIMARY KEY (userID, friendID)
   );
 
 CREATE TABLE IF NOT EXISTS ReportedUsers (

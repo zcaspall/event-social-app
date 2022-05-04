@@ -18,7 +18,7 @@ async function createNewUser(req, res){
 async function loginUser(req, res){
     const {username, password} = req.body;
     const user = userModels.getUserByUsername(username);
-
+    
     if (!user) {
         return res.sendStatus(400);
     }
@@ -63,11 +63,13 @@ function sendFriendRequest(req, res){
     if(!req.body.friendName){
         return res.sendStatus(400);
     }
-    let {friendName} = req.body;
-    const userName = req.session.user.userName.toLowerCase();
-    friendName = friendName.toLowerCase();
 
-    const success = userModels.requestFriend(userName, friendName);
+    const {friendName} = req.body;
+    const friend = userModels.getUserByUsername(friendName);
+    const friendID = friend.userID;
+    const userID = req.session.user.userID;
+
+    const success = userModels.requestFriend(userID, friendID);
     if (!success){
         return res.sendStatus(409);
     }
@@ -98,14 +100,11 @@ function acceptFriendRequest (req, res){
     if(!req.session.isLoggedIn)
         return res.redirect("/login");
 
-    if(!req.body.userName || !req.body.friendName){
-        return res.sendStatus(400);
-    }
+    const userID = req.params.userID;
+    const friendID = req.session.user.userID; 
+    userModels.acceptRequest(userID, friendID);
 
-    const {userName, friendName} = req.body; 
-    userModels.acceptRequest(userName, friendName);
-
-    res.sendStatus(200);
+    res.redirect("/accept");
 };
 
 
