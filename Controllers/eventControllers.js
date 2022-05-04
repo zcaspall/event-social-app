@@ -16,7 +16,6 @@ function renderMain (req, res) {
 async function createEvent(req, res){
     const { path, filename } = req.file;
     const { user, isLoggedIn } = req.session;
-
     if (!isLoggedIn) {
         return res.redirect("/login");
     }
@@ -24,6 +23,7 @@ async function createEvent(req, res){
     const hostId = user.userID;
     const {eventName, eventDate, eventDescription} = req.body;
     const eventLocation = JSON.parse(req.body.eventLocationData);
+    
 
     const locationName = eventLocation.properties.formatted;
     const lattitude = eventLocation.properties.lat;

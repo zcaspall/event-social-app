@@ -59,7 +59,7 @@ app.post("/report", reportValidator.validateReportBody, userController.sendUserR
 app.get("/accept/:userID", userController.acceptFriendRequest);
 
 //event endpoints
-app.post("/events", eventValidator.validateEventBody, eventImages.single('file'), eventController.createEvent);
+app.post("/events", eventImages.single('file'), eventValidator.validateEventBody, eventController.createEvent);
 app.get("/events", eventController.renderEventPage);
 app.get("/events/:eventId", eventController.renderEvent);
 app.post("/join/:eventId", eventController.joinEvent);
