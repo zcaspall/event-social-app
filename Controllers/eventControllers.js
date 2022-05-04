@@ -82,8 +82,7 @@ async function joinEvent(req, res) {
 
 module.exports = {
     renderMain,
-    createEvent,
-    getSearchResultsByKeyword,
+    createEvent, 
     uploadEventPics,
     renderEventPage,
     renderEvent,
