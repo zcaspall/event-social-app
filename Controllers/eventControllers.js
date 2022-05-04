@@ -10,13 +10,12 @@ function renderMain (req, res) {
     const hostedEvents = eventModels.getEventsByHost(hostId);
     const attendedEvents = eventModels.getEventsAttendedByUser(hostId);
 
-    res.render("mainPage", {hostedEvents, attendedEvents});
+    res.render("mainPage", {hostedEvents, attendedEvents, user});
 }
 
-async function createEvent(req, res, next){
+async function createEvent(req, res){
     const { path, filename } = req.file;
     const { user, isLoggedIn } = req.session;
-
     if (!isLoggedIn) {
         return res.redirect("/login");
     }
@@ -24,6 +23,7 @@ async function createEvent(req, res, next){
     const hostId = user.userID;
     const {eventName, eventDate, eventDescription} = req.body;
     const eventLocation = JSON.parse(req.body.eventLocationData);
+    
 
     const locationName = eventLocation.properties.formatted;
     const lattitude = eventLocation.properties.lat;
