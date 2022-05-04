@@ -30,7 +30,7 @@ const profileStorage = multer.diskStorage({
 
 const upload = multer({ storage: profileStorage });
 
-app.post("/users/:userID/pfp", upload.single("picture"), (req, res) => {
+app.post("/users/:userID/picture", upload.single("picture"), (req, res) => {
   console.log(req.file);
   res.send("File uploaded");
 });

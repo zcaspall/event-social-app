@@ -4,9 +4,15 @@ CREATE TABLE IF NOT EXISTS Users (
     userName TEXT(20) UNIQUE NOT NULL,
     userPasswordHash TEXT(50) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
-    userPhone INTEGER,
+    userPhone INTEGER
 );
 
+-- User Image Tables
+CREATE TABLE IF NOT EXISTS UserImages (
+  imageID TEXT UNIQUE PRIMARY KEY,
+  imageOwner TEXT NOT NULL REFERENCES Users(userID),
+  pfpPath TEXT NOT NULL
+)
 
 -- Event tables
 CREATE TABLE IF NOT EXISTS Events (

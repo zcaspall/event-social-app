@@ -31,6 +31,8 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     }
 };
 
+
+
 function getUserByUsername (userName) {
     const sql = `SELECT * FROM Users WHERE userName = @userName`;
 
@@ -39,6 +41,17 @@ function getUserByUsername (userName) {
         "userName": userName.toLowerCase()
     });
 
+    return record;
+}
+
+function getImage(userID){
+    const sql = `SELECT * FROM Users WHERE userID = @userID EventImages JOIN Users ON userID=imageOwner`;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userID": userID
+    });
+    
     return record;
 }
 
@@ -55,4 +68,5 @@ module.exports = {
     createUser,
     getUserByUsername,
     deleteUserByUsername,
+    getImage,
 }
