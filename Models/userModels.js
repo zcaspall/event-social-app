@@ -13,18 +13,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const requestText = (
-    "You have been sent a friend request.\n\n" +
-    //`Use this link to accept: ${process.env.URL}`
-    `Use this link to accept: ${process.env.URL}/accept`
-);
 
-const requestHTML = (
-    "<h1 style=\"margin-bottom: 1rem;\">You have been sent a friend request!</h1>" +
-  "<p>" +
-    `Click <a href="${process.env.URL}">here</a> to accept!` +
-  "</p>"
-);
 
 const joinText = (
     "You've made an account on our Social App!\n\n"
@@ -66,29 +55,45 @@ async function sendEmail (recipient, subject, text, html) {
 };
 
 	
-async function sendFriendReqEmail (to) {
+async function sendFriendReqEmail (userID, to) {
+    const requestText = (
+        "You have been sent a friend request.\n\n" +
+        `Use this link to accept: http://${process.env.URL}/accept${userID}`
+    );
+    const requestHTML = (
+        "<h1 style=\"margin-bottom: 1rem;\">You have been sent a friend request!</h1>" +
+      "<p>" +
+        `Click <a href="http://${process.env.URL}/accept/${userID}">here</a> to accept!` +
+      "</p>"
+    );
+    try {
     const emailSent = await sendEmail(to, "You have a friend request!", requestText, requestHTML);
-    if (emailSent) {
-      console.log("Email Sent to " + to);
-    } else {
+    } catch (err) {
+        console.error(err);
+    }
+    if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
 
 async function sendJoinEmail (to) {
-    const emailSent = await sendEmail(to, "You joined our site!", joinText, joinHTML);
-    if (emailSent) {
-      console.log("Email Sent to " + to);
-    } else {
+    try {
+        const emailSent = await sendEmail(to, "You joined our site!", joinText, joinHTML);
+    } catch (err) {
+        console.error(err);
+    }
+    if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
 
 async function sendReportedEmail (to) {
+    try {
     const emailSent = await sendEmail(to, "Someone didn't like you!", reportedText, reportedHTML);
-    if (emailSent) {
-      console.log("Email Sent to " + to);
-    } else {
+    } catch (err) {
+        console.error(err);
+    }
+    if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
@@ -247,6 +252,7 @@ function checkForStrikes(userID, reportedID){
 
 function requestFriend(userID, friendID){
     const friend = getUserByID(friendID);
+    const user = getUserByID(userID);
     let success = true;
 
     const sql = `
@@ -267,9 +273,7 @@ function requestFriend(userID, friendID){
                 console.error(err);
                 return;
             }
-            const friendEmail = friend.userEmail;
-            sendFriendReqEmail (friendEmail);
-            
+            sendFriendReqEmail (user.userID, friend.userEmail);
         } else success = false;
     }
     return success;
@@ -340,6 +344,28 @@ function acceptRequest(userID, friendID){
     }
 };
 
+function findFriendsByID(userID){
+    const sql = `
+        SELECT friendID AS friend
+        FROM Friends
+        WHERE userID = @userID
+        UNION 
+        SELECT userID AS friend
+        FROM Friends
+        WHERE friendID = @userID`;
+
+    const stmt = db.prepare(sql);
+    try {
+        friends = stmt.all({
+            "userID": userID
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    return friends;
+}
+
 module.exports = {
     createUser,
     getUserByUsername,
@@ -351,4 +377,5 @@ module.exports = {
     requestFriend,
     acceptRequest,
     uploadImage,
-}
+    findFriendsByID
+};
