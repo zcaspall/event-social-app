@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS EventImages (
 -- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,
-   eventId TEXT,
-   PRIMARY KEY (userID, eventId)
+   eventID TEXT,
+   PRIMARY KEY (userID, eventID)
 );
 
 CREATE TABLE IF NOT EXISTS Friends (

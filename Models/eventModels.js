@@ -115,8 +115,8 @@ function joinEvent(userID, eventID){
                  (@userID, @eventID)`;
     const stmt = db.prepare(sql);
 
-    stmt.run({"userId": userID,
-              "eventId": eventID});
+    stmt.run({"userID": userID,
+              "eventID": eventID});
 }
 
 module.exports = {
