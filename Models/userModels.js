@@ -139,6 +139,7 @@ function getUserByUsername (userName) {
 
 function getUserByID (userID) {
     const sql = `SELECT * FROM Users WHERE userID = @userID`;
+    console.log(userID);
 
     const stmt = db.prepare(sql);
     const record = stmt.get({
@@ -333,6 +334,37 @@ function findFriendsByID(userID){
     return friends;
 }
 
+function getImage(userID){
+    const sql = `SELECT * FROM Users 
+                 JOIN UserImages ON 
+                 userID=imageOwner WHERE userID = @userID `;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userID": userID
+    });
+    return record;
+};
+
+function uploadImage(imageOwner, imageID, pfpPath){
+    const sql = `INSERT INTO UserImages
+                    (imageID, imageOwner, pfpPath)
+                Values
+                    (@imageID, @imageOwner, @pfpPath)`;
+    
+    const stmt = db.prepare(sql);
+    try{
+        stmt.run({
+            "imageID": imageID,
+            "imageOwner": imageOwner,
+            "pfpPath": pfpPath,
+        });
+    }
+    catch(err){
+        console.log(err);
+    }
+};
+
 module.exports = {
     createUser,
     getUserByUsername,
@@ -341,5 +373,7 @@ module.exports = {
     reportUser,
     requestFriend,
     acceptRequest,
-    findFriendsByID
+    findFriendsByID,
+    getImage,
+    uploadImage
 }

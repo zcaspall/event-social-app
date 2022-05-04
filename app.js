@@ -11,6 +11,13 @@ const app = express();
 
 // Multer
 const eventImages = multer({dest: 'public/images/eventImages/'});
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "/public/images/profilePictures");
+    },
+});
+
+const profileStorage = multer({storage: fileStorage});
 
 const sessionConfig = {
     store: new RedisStore({ client: redis.createClient() }),
@@ -23,6 +30,8 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 8,
     }
 };
+
+
 
 app.use(session(sessionConfig));
 
@@ -57,6 +66,8 @@ app.delete("/users/:userName", userController.deleteUserByName);
 app.post("/friend", friendValidator.validateRequestBody, userController.sendFriendRequest);
 app.post("/report", reportValidator.validateReportBody, userController.sendUserReport);
 app.get("/accept/:userID", userController.acceptFriendRequest);
+app.get("/users/:userID", userController.renderAccount);
+app.post("/users/:userID/picture", profileStorage.single("picture"), catchAsyncErrors(userController.userProfilePicture));
 
 //event endpoints
 app.post("/events", eventImages.single('file'), eventValidator.validateEventBody, eventController.createEvent);

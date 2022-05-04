@@ -27,6 +27,13 @@ CREATE TABLE IF NOT EXISTS EventImages (
     imagePath TEXT NOT NULL
 );
 
+-- User Image Tables
+CREATE TABLE IF NOT EXISTS UserImages (
+  imageID TEXT UNIQUE PRIMARY KEY,
+  imageOwner TEXT NOT NULL REFERENCES Users(userID),
+  pfpPath TEXT NOT NULL
+);
+
 -- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,

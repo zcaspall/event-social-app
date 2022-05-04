@@ -115,11 +115,49 @@ function acceptFriendRequest (req, res){
     res.redirect("/accept");
 };
 
+async function userProfilePicture(req, res){
+    const{user, isLoggedIn} = req.session;
+    const{path, filename} = req.file;
+
+    const userID = user.userID;
+
+    if(!isLoggedIn){
+        return res.redirect("/login");
+    }
+
+    const imageID = filename;
+    const imageOwned = user.userID;
+    const pfpPath = path;
+
+    try{
+        await userModels.uploadImage(imageOwned, imageID, pfpPath);
+    }
+    catch(err){
+        console.log(err);
+    }
+    res.redirect("/users/:userID");
+}
+
+function renderAccount(req, res){
+    const {user, isLoggedIn} = req.session;
+
+    if(!user || !isLoggedIn){
+        return res.status(404);
+    }
+
+    // const image = userModels.getImage(user.userID);
+
+    const accountOwner = userModels.getUserByID(user.userID);
+    res.render("accountPage", {"user": accountOwner , "image": image});
+}
+
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
     sendFriendRequest,
     sendUserReport,
-    acceptFriendRequest
+    acceptFriendRequest,
+    userProfilePicture,
+    renderAccount,
 }
