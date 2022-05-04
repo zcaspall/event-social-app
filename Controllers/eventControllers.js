@@ -56,6 +56,13 @@ function renderEvent(req, res) {
     res.render("event", {event});
 }
 
+function uploadEventPics(req, res){
+    eventImages.array("eventImages");
+    console.log(req.files);
+    console.log(req.body);
+    res.sendStatus(200);
+}
+
 async function joinEvent(req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
@@ -73,9 +80,10 @@ async function joinEvent(req, res) {
     res.redirect("/");
 }
 
-module.exports = { 
+module.exports = {
     renderMain,
-    createEvent,
+    createEvent, 
+    uploadEventPics,
     renderEventPage,
     renderEvent,
     joinEvent

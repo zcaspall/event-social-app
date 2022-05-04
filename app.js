@@ -49,10 +49,23 @@ app.use(express.static("public", {
     extensions: ['html', 'js', 'css', 'png', 'jpg', 'jpeg']
 }));
 
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./public/images/profilePictures");
+    },
+});
+
+const profileStorage = multer({storage: fileStorage});
+
 // user endpoints
+app.post("/users/:userID/picture", profileStorage.single("picture"), userController.userProfilePicture)
+
+app.post("/register", userController.createNewUser);
+app.post("/login", userController.loginUser);
+app.get("/users/:userID", userController.renderAccount);
 app.get("/", eventController.renderMain);
-app.post("/register",registerValidator.validateRegisterBody, catchAsyncErrors(userController.createNewUser));
-app.post("/login", loginValidator.validateLoginBody, catchAsyncErrors(userController.loginUser));
+app.post("/register",registerValidator.validateRegisterBody, userController.createNewUser);
+app.post("/login", loginValidator.validateLoginBody, userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 app.post("/friend", friendValidator.validateRequestBody, userController.sendFriendRequest);
 app.post("/report", reportValidator.validateReportBody, userController.sendUserReport);
@@ -62,7 +75,7 @@ app.get("/accept/:userID", userController.acceptFriendRequest);
 app.post("/events", eventImages.single('file'), eventValidator.validateEventBody, eventController.createEvent);
 app.get("/events", eventController.renderEventPage);
 app.get("/events/:eventId", eventController.renderEvent);
-app.post("/join/:eventId", catchAsyncErrors(eventController.joinEvent));
+app.post("/join/:eventId", eventController.joinEvent);
 
 // 404 Handler
 app.use(notFoundHandler);

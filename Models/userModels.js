@@ -126,6 +126,8 @@ async function createUser(userName, userPassword, userEmail, userPhone){
     sendJoinEmail(userEmail);
 };
 
+
+
 function getUserByUsername (userName) {
     const sql = `SELECT * FROM Users WHERE userName = @userName`;
 
@@ -148,6 +150,37 @@ function getUserByID (userID) {
     return record;
 }
 
+function uploadImage(imageOwner, imageID, pfpPath){
+    const sql = `INSERT INTO UserImages
+                    (imageID, imageOwner, pfpPath)
+                Values
+                    (@imageID, @imageOwner, @pfpPath)`;
+    
+    const stmt = db.prepare(sql);
+    try{
+        stmt.run({
+            "imageID": imageID,
+            "imageOwner": imageOwner,
+            "pfpPath": pfpPath,
+        });
+    }
+    catch(err){
+        console.log(err);
+    }
+};
+
+function getImage(userID){
+    const sql = `SELECT * FROM Users 
+                 JOIN UserImages ON 
+                 userID=imageOwner WHERE userID = @userID `;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userID": userID
+    });
+    return record;
+};
+
 function deleteUserByUsername (userName) {
     const sql = `DELETE FROM Users WHERE userName = @userName`;
 
@@ -155,7 +188,7 @@ function deleteUserByUsername (userName) {
     stmt.run({
         "userName": userName.toLowerCase()
     });
-}
+};
 
 function reportUser(userName, reportedName){
     const user = getUserByUsername(userName);
@@ -336,10 +369,13 @@ function findFriendsByID(userID){
 module.exports = {
     createUser,
     getUserByUsername,
+    deleteUserByUsername,
+    getImage,
     getUserByID,
     deleteUserByUsername,
     reportUser,
     requestFriend,
     acceptRequest,
+    uploadImage,
     findFriendsByID
-}
+};

@@ -2,6 +2,7 @@
 const userModels = require("../Models/userModels");
 const argon2 = require("argon2");
 
+
 async function createNewUser(req, res){
     
     const {userName, userPassword, userEmail, userPhone} = req.body;
@@ -54,7 +55,6 @@ async function loginUser(req, res){
 
 function deleteUserByName(req, res){
     const { userName } = req.body;
-    // make it so it sends an error when the username is not found
     if(!userModels.getUserByUsername(userName)){
         return res.sendStatus(404);
     }
@@ -63,6 +63,43 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
+async function userProfilePicture(req, res){
+    const{user, isLoggedIn} = req.session;
+    const{path, filename} = req.file;
+
+    const userID = user.userID
+
+    if(!isLoggedIn){
+        return res.redirect("/login");
+    }
+
+    const imageID = filename;
+    const imageOwned = user.userID;
+    const pfpPath = path;
+
+    try{
+        await userModels.uploadImage(imageOwned, imageID, pfpPath)
+    }
+    catch(err){
+        console.log(err);
+    }
+
+    userModels.getImage(userID);
+    res.redirect("/users/:userID");
+}
+
+function renderAccount(req, res){
+    const {user, isLoggedIn} = req.session;
+
+    if(!user || !isLoggedIn){
+        return res.status(404);
+    }
+
+    const image = userModels.getImage(user.userID);
+
+    const accountOwner = userModels.getUserByID(user.userID);
+    res.render("accountPage", {"user": accountOwner , "image": image});
+}
 
 function sendFriendRequest(req, res){
     if(!req.session.isLoggedIn)
@@ -119,6 +156,8 @@ module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
+    renderAccount,
+    userProfilePicture,
     sendFriendRequest,
     sendUserReport,
     acceptFriendRequest
