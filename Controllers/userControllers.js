@@ -49,6 +49,17 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
+function userProfilePicture(req, res){
+    const{userID} = req.body.userID;
+
+    if(!userModels.getImage(userID)){
+        return res.sendStatus(404);
+    }
+
+    userModels.getImage(userID);
+    res.sendStatus(200);
+}
+
 function renderAccount(req, res){
     const user = userModel.getUserByID(req.params.userID);
 
@@ -63,5 +74,6 @@ module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
-    renderAccount
+    renderAccount,
+    userProfilePicture,
 }
