@@ -13,18 +13,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const requestText = (
-    "You have been sent a friend request.\n\n" +
-    //`Use this link to accept: ${process.env.URL}`
-    `Use this link to accept: ${process.env.URL}/accept`
-);
 
-const requestHTML = (
-    "<h1 style=\"margin-bottom: 1rem;\">You have been sent a friend request!</h1>" +
-  "<p>" +
-    `Click <a href="${process.env.URL}">here</a> to accept!` +
-  "</p>"
-);
 
 const joinText = (
     "You've made an account on our Social App!\n\n"
@@ -66,29 +55,34 @@ async function sendEmail (recipient, subject, text, html) {
 };
 
 	
-async function sendFriendReqEmail (to) {
+async function sendFriendReqEmail (userID, to) {
+    const requestText = (
+        "You have been sent a friend request.\n\n" +
+        `Use this link to accept: http://${process.env.URL}/accept${userID}`
+    );
+    const requestHTML = (
+        "<h1 style=\"margin-bottom: 1rem;\">You have been sent a friend request!</h1>" +
+      "<p>" +
+        `Click <a href="http://${process.env.URL}/accept/${userID}">here</a> to accept!` +
+      "</p>"
+    );
+    
     const emailSent = await sendEmail(to, "You have a friend request!", requestText, requestHTML);
-    if (emailSent) {
-      console.log("Email Sent to " + to);
-    } else {
+    if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
 
 async function sendJoinEmail (to) {
     const emailSent = await sendEmail(to, "You joined our site!", joinText, joinHTML);
-    if (emailSent) {
-      console.log("Email Sent to " + to);
-    } else {
+    if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
 
 async function sendReportedEmail (to) {
     const emailSent = await sendEmail(to, "Someone didn't like you!", reportedText, reportedHTML);
-    if (emailSent) {
-      console.log("Email Sent to " + to);
-    } else {
+    if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
@@ -127,6 +121,17 @@ function getUserByUsername (userName) {
     const stmt = db.prepare(sql);
     const record = stmt.get({
         "userName": userName,
+    });
+    
+    return record;
+}
+
+function getUserByID (userID) {
+    const sql = `SELECT * FROM Users WHERE userID = @userID`;
+
+    const stmt = db.prepare(sql);
+    const record = stmt.get({
+        "userID": userID,
     });
     
     return record;
@@ -201,51 +206,52 @@ function checkForStrikes(userID, reportedID){
     return previouslyStriked;
 };
 
-function requestFriend(userName, friendName){
-    const friend = getUserByUsername(userName);
+function requestFriend(userID, friendID){
+    const friend = getUserByID(friendID);
+    const user = getUserByID(userID);
     let success = true;
 
     const sql = `
     INSERT INTO Friends
-        (userName, friendName)
+        (userID, friendID)
     VALUES
-        (@userName, @friendName)`;
+        (@userID, @friendID)`;
     const stmt = db.prepare(sql);
 
     if (friend){   
-        if (!checkFriend(userName, friendName)){
+        if (!checkFriend(userID, friendID)){
             try {
                 stmt.run({
-                    "userName": userName, 
-                    "friendName": friendName
+                    "userID": userID, 
+                    "friendID": friendID
                 });
             } catch (err) {
                 console.error(err);
                 return;
             }
-            const friendEmail = friend.userEmail;
-            sendFriendReqEmail (friendEmail);
-            
+            //const friendEmail = friend.userEmail;
+            //sendFriendReqEmail (friendEmail);
+            sendFriendReqEmail (user.userID, friend.userEmail);
         } else success = false;
     }
     return success;
 };
 
-function checkFriend(userName, friendName){
+function checkFriend(userID, friendID){
     let friendFirst = null;
     let userFirst;
     let alreadyRequested = false;
     const sql = `
         SELECT *
         FROM Friends
-        WHERE userName = @userName
-        AND friendName = @friendName`;
+        WHERE userID = @userID
+        AND friendID = @friendID`;
     
     const stmt = db.prepare(sql);
     try {
         userFirst = stmt.get({
-            "userName": userName, 
-            "friendName": friendName
+            "userID": userID, 
+            "friendID": friendID
         });
     } catch (err) {
         console.error(err);
@@ -254,8 +260,8 @@ function checkFriend(userName, friendName){
     
     try {
         friendFirst = stmt.get({
-            "userName": friendName, 
-            "friendName": userName
+            "userID": friendID, 
+            "friendID": userID
         });
     } catch (err) {
         console.error(err);
@@ -267,18 +273,18 @@ function checkFriend(userName, friendName){
     return alreadyRequested;
 };
 
-function acceptRequest(userName, friendName){
+function acceptRequest(userID, friendID){
     const sql = `
         UPDATE Friends
         SET accepted = 1
-        WHERE userName = @userName
-        AND friendName = @friendName`;
+        WHERE userID = @userID
+        AND friendID = @friendID`;
     
     const stmt = db.prepare(sql);
     try {
         stmt.run({
-            "userName": userName, 
-            "friendName": friendName
+            "userID": userID, 
+            "friendID": friendID
         });
     } catch (err) {
         console.error(err);
@@ -287,8 +293,8 @@ function acceptRequest(userName, friendName){
     
     try {
         stmt.run({
-            "userName": friendName, 
-            "friendName": userName
+            "userID": friendID, 
+            "friendID": userID
         });
     } catch (err) {
         console.error(err);
@@ -296,11 +302,35 @@ function acceptRequest(userName, friendName){
     }
 };
 
+function findFriendsByID(userID){
+    const sql = `
+        SELECT friendID AS friend
+        FROM Friends
+        WHERE userID = @userID
+        UNION 
+        SELECT userID AS friend
+        FROM Friends
+        WHERE friendID = @userID`;
+
+    const stmt = db.prepare(sql);
+    try {
+        friends = stmt.all({
+            "userID": userID
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    return friends;
+}
+
 module.exports = {
     createUser,
     getUserByUsername,
+    getUserByID,
     deleteUserByUsername,
     reportUser,
     requestFriend,
-    acceptRequest
+    acceptRequest,
+    findFriendsByID
 }

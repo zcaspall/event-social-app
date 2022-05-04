@@ -30,15 +30,15 @@ CREATE TABLE IF NOT EXISTS EventImages (
 -- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,
-   eventId TEXT,
+   eventID TEXT,
    PRIMARY KEY (userID, eventId)
 );
 
 CREATE TABLE IF NOT EXISTS Friends (
-   userName TEXT,
-   friendName  TEXT,
+   userID TEXT,
+   friendID  TEXT,
    accepted BOOLEAN DEFAULT FALSE,
-   PRIMARY KEY (userName, friendName)
+   PRIMARY KEY (userID, friendID)
   );
 
 CREATE TABLE IF NOT EXISTS ReportedUsers (

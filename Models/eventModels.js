@@ -53,20 +53,6 @@ function getAllEvents() {
     return stmt.all();
 }
 
-function getEventsByKeyword(keyword) {
-    // Searches for event that contains keyword
-    const sql = `
-        SELECT * FROM Events
-        WHERE eventName LIKE '%' + @keyword '%'
-    `;
-    
-    const stmt = db.prepare(sql);
-
-    const events = stmt.all({keyword});
-    // will return events or undefined if none found
-    return events;
-};
-
 function getEventsByLocation(coordinates, radius, inMiles=true) {
     // Finds events within a radius of the provided location
     // this uses the lat and lng coordinates and the spherical law of cosines
@@ -103,7 +89,7 @@ function getEventsByHost(hostId) {
 };
 
 function getEventsAttendedByUser(userId) {
-    const sql = `SELECT * FROM Events 
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId
                 WHERE eventId IN (
                     SELECT eventId FROM UsersGoingTo 
                     WHERE userId = @userId
@@ -114,9 +100,30 @@ function getEventsAttendedByUser(userId) {
     return stmt.all({userId});
 };
 
+function getEventById(eventId) {
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId WHERE eventId=@eventId`;
+
+    const stmt = db.prepare(sql);
+
+    return stmt.get({eventId});
+};
+
+function joinEvent(userID, eventID){
+    const sql = `INSERT INTO UsersGoingTo
+                 (userID, eventID)         
+                 VALUES
+                 (@userID, @eventID)`;
+    const stmt = db.prepare(sql);
+
+    stmt.run({"userID": userID,
+              "eventID": eventID});
+}
+
 module.exports = {
     addNewEvent,
     getAllEvents,
     getEventsByHost,
     getEventsAttendedByUser,
+    getEventById,
+    joinEvent,
 };
