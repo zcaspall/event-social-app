@@ -50,6 +50,7 @@ function renderEvent(req, res) {
     }
 
     const event = eventModels.getEventById(req.params.eventId);
+    res.render("event", {event});
 }
 
 module.exports = { 

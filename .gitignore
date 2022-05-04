@@ -105,6 +105,3 @@ dist
 
 # Packages
 package-lock.json
-
-# Database
-*.db
