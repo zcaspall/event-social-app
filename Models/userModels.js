@@ -240,8 +240,6 @@ function requestFriend(userID, friendID){
                 console.error(err);
                 return;
             }
-            //const friendEmail = friend.userEmail;
-            //sendFriendReqEmail (friendEmail);
             sendFriendReqEmail (user.userID, friend.userEmail);
         } else success = false;
     }
