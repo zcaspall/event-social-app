@@ -108,10 +108,22 @@ function getEventById(eventId) {
     return stmt.get({eventId});
 };
 
+function joinEvent(userID, eventID){
+    const sql = `INSERT INTO UsersGoingTo
+                 (userID, eventID)         
+                 VALUES
+                 (@userID, @eventID)`;
+    const stmt = db.prepare(sql);
+
+    stmt.run({"userId": userID,
+              "eventId": eventID});
+}
+
 module.exports = {
     addNewEvent,
     getAllEvents,
     getEventsByHost,
     getEventsAttendedByUser,
     getEventById,
+    joinEvent,
 };
