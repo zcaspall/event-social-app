@@ -10,7 +10,11 @@ async function createNewUser(req, res){
         || !req.body.userEmail || !req.body.userPhone){
         return res.sendStatus(400);
     } else {
+        try{
         await userModels.createUser(userName, userPassword, userEmail, userPhone);
+        } catch (error){
+            console.error(error);
+        }
         res.redirect("/");
     }
 }
@@ -25,6 +29,7 @@ async function loginUser(req, res){
 
     const { userPasswordHash, userID } = user;
 
+    try{
     if (await argon2.verify(userPasswordHash, password)) {
         req.session.regenerate((err) => {
             if (err) {
@@ -41,6 +46,9 @@ async function loginUser(req, res){
         });
     } else { 
         return res.sendStatus(400);
+    }
+    } catch (err){
+        console.error(error);
     }
 }
 

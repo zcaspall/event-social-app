@@ -12,18 +12,18 @@ const validateOpts = {
 
 const eventSchema = joi.object({
     eventName: joi.string()
-        .min(3)
-        .required(),
+                  .min(3)
+                  .required(),
 
     eventDate: joi.date()
-        .required(),
+                  .required(),
 
     eventLocation: joi.string()
-        .required(),
+                      .required(),
     
     eventDescription: joi.string()
-        .min(3)
-        .max(300),
+                         .min(3)
+                         .max(300),
 }); 
     
 function validateEventBody(req, res, next) {
