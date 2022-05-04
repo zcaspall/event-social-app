@@ -22,8 +22,11 @@ const eventSchema = joi.object({
                       .required(),
     
     eventDescription: joi.string()
-                         .min(3)
-                         .max(300),
+        .min(3)
+        .max(300),
+
+    eventLocationData: joi.string()
+        .required(),
 }); 
     
 function validateEventBody(req, res, next) {
