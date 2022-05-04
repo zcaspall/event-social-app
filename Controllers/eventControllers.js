@@ -2,23 +2,81 @@
 const eventModels = require("../Models/eventModels");
 const multer = require("multer");
 
+<<<<<<< HEAD
  const eventImages = multer({ dest: "eventImages/"});
  
-async function createEvent(req, res){
-    const {eventName, eventDate, locationName, zipcode, latitude, longitude} = req.body;
-
-    if(!req.body.eventName || !req.body.eventDate || !req.body.locationName || !req.body.zipcode || !req.body.latitude || !req.body.longitude){
-       return res.sendStatus(400)
+=======
+function renderMain (req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!user || !isLoggedIn) {
+        return res.redirect("/login");
     }
+    const hostId = user.userID;
+    const hostedEvents = eventModels.getEventsByHost(hostId);
+    const attendedEvents = eventModels.getEventsAttendedByUser(hostId);
 
-    await eventModels.addNewEvent(eventName, eventDate, locationName, zipcode, latitude, longitude);
-    res.sendStatus(200);
+    res.render("mainPage", {hostedEvents, attendedEvents, user});
 }
 
-function getSearchResultsByKeyword(req, res){
-    const events = eventModels.getEventsByKeyword(req.body.keyword);
+>>>>>>> 6361be625e5b6ff98fdc8782d6ccd432bf93c0ff
+async function createEvent(req, res){
+    const { path, filename } = req.file;
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.redirect("/login");
+    }
 
-    res.render("searchResults", {events});
+    const hostId = user.userID;
+    const {eventName, eventDate, eventDescription} = req.body;
+    const eventLocation = JSON.parse(req.body.eventLocationData);
+    
+
+    const locationName = eventLocation.properties.formatted;
+    const lattitude = eventLocation.properties.lat;
+    const longitude = eventLocation.properties.lon;
+
+    res.redirect("/");
+    try {
+        await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function renderEventPage(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.redirect("/login");
+    }
+    const events = eventModels.getAllEvents();
+    res.render("eventsPage", {events});
+}
+
+function renderEvent(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.redirect("/login");
+    }
+
+    const event = eventModels.getEventById(req.params.eventId);
+    res.render("event", {event});
+}
+
+async function joinEvent(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.redirect("/login");
+    }
+
+    const userId = user.userID;
+    const eventId = req.params.eventId;
+    try {
+        await eventModels.joinEvent(userId, eventId);
+    } catch (err) {
+        console.error(err);
+    }
+
+    res.redirect("/");
 }
 
 
@@ -34,7 +92,15 @@ function uploadEventPics(req, res){
 }
 
 module.exports = { 
+    renderMain,
     createEvent,
+<<<<<<< HEAD
     getSearchResultsByKeyword,
     uploadEventPics,
 }
+=======
+    renderEventPage,
+    renderEvent,
+    joinEvent
+};
+>>>>>>> 6361be625e5b6ff98fdc8782d6ccd432bf93c0ff

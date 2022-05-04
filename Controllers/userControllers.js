@@ -10,32 +10,46 @@ async function createNewUser(req, res){
     if(!req.body.userName || !req.body.userPassword
         || !req.body.userEmail || !req.body.userPhone){
         return res.sendStatus(400);
-    }
-    else{
+    } else {
+        try{
         await userModels.createUser(userName, userPassword, userEmail, userPhone);
-        res.sendStatus(201);
+        } catch (error){
+            console.error(error);
+        }
+        res.redirect("/");
     }
 }
 
 async function loginUser(req, res){
-    if (!req.body.userName || !req.body.userPassword) {
-        return res.sendStatus(400);
-    }
-
-    const {userName, userPassword} = req.body;
-
-    const user = userModels.getUserByUsername(userName);
-
+    const {username, password} = req.body;
+    const user = userModels.getUserByUsername(username);
+    
     if (!user) {
         return res.sendStatus(400);
     }
 
-    const { userPasswordHash } = user;
+    const { userPasswordHash, userID } = user;
 
-    if (await argon2.verify(userPasswordHash, userPassword)) {
-        res.sendStatus(200);
+    try{
+    if (await argon2.verify(userPasswordHash, password)) {
+        req.session.regenerate((err) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+            
+            req.session.user = {};
+            req.session.user.userName = username;
+            req.session.user.userID = userID;
+            req.session.isLoggedIn = true;
+            
+            res.redirect("/");
+        });
     } else { 
-        res.sendStatus(400);
+        return res.sendStatus(400);
+    }
+    } catch (err){
+        console.error(error);
     }
 }
 
@@ -49,31 +63,63 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
-function userProfilePicture(req, res){
-    const{userID} = req.body.userID;
 
-    if(!userModels.getImage(userID)){
-        return res.sendStatus(404);
+function sendFriendRequest(req, res){
+    if(!req.session.isLoggedIn)
+        return res.redirect("/login");
+
+    if(!req.body.friendName){
+        return res.sendStatus(400);
     }
 
-    userModels.getImage(userID);
+    const {friendName} = req.body;
+    const friend = userModels.getUserByUsername(friendName);
+    const friendID = friend.userID;
+    const userID = req.session.user.userID;
+
+    const success = userModels.requestFriend(userID, friendID);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
     res.sendStatus(200);
-}
+};
 
-function renderAccount(req, res){
-    const user = userModel.getUserByID(req.params.userID);
+function sendUserReport(req, res){
+    if(!req.session.isLoggedIn)
+        return res.redirect("/login");
 
-    if(!user){
-        res.status(404);
+    if(!req.body.reportedName){
+        return res.sendStatus(400);
+    }
+    const userName = req.session.user.userName.toLowerCase();
+
+    const {reportedName} = req.body;
+    
+    const success = userModels.reportUser(userName, reportedName);
+    if (!success){
+        return res.sendStatus(409);
     }
 
-    res.render("accountPage", {"user": user})
-}
+    res.sendStatus(200);
+};
+
+function acceptFriendRequest (req, res){
+    if(!req.session.isLoggedIn)
+        return res.redirect("/login");
+
+    const userID = req.params.userID;
+    const friendID = req.session.user.userID; 
+    userModels.acceptRequest(userID, friendID);
+
+    res.redirect("/accept");
+};
 
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
-    renderAccount,
-    userProfilePicture,
+    sendFriendRequest,
+    sendUserReport,
+    acceptFriendRequest
 }
