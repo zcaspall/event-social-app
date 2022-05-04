@@ -1,9 +1,10 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
+
 function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
-    if (!isLoggedIn) {
-        res.redirect("/login");
+    if (!user || !isLoggedIn) {
+        return res.redirect("/login");
     }
     const hostId = user.userID;
     const hostedEvents = eventModels.getEventsByHost(hostId);
@@ -17,11 +18,13 @@ async function createEvent(req, res, next){
     const { user, isLoggedIn } = req.session;
 
     if (!isLoggedIn) {
-        res.redirect("/login");
+        return res.redirect("/login");
     }
+
     const hostId = user.userID;
     const {eventName, eventDate, eventDescription} = req.body;
     const eventLocation = JSON.parse(req.body.eventLocationData);
+
     const locationName = eventLocation.properties.formatted;
     const lattitude = eventLocation.properties.lat;
     const longitude = eventLocation.properties.lon;
@@ -34,19 +37,19 @@ async function createEvent(req, res, next){
 function renderEventPage(req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
-        res.redirect("/login");
+        return res.redirect("/login");
     }
     const events = eventModels.getAllEvents();
     res.render("eventsPage", {events});
 }
 
-function getSearchResultsByKeyword(req, res){
-    const events = eventModels.getEventsByKeyword(req.body.keyword);
-
-    res.render("searchResults", {events});
+function searchEvents(req, res) {
+    return req.query.search;
 }
+
 module.exports = { 
     renderMain,
     createEvent,
     renderEventPage,
+    searchEvents
 };

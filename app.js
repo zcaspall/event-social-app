@@ -59,5 +59,6 @@ app.post("/accept", userController.acceptFriendRequest);
 //event endpoints
 app.post("/events", eventImages.single('file'), eventController.createEvent);
 app.get("/events", eventController.renderEventPage);
+app.get("/events/search", eventController.searchEvents);
 
 module.exports = app;
