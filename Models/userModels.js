@@ -66,22 +66,33 @@ async function sendFriendReqEmail (userID, to) {
         `Click <a href="http://${process.env.URL}/accept/${userID}">here</a> to accept!` +
       "</p>"
     );
-    
+    try {
     const emailSent = await sendEmail(to, "You have a friend request!", requestText, requestHTML);
+    } catch (err) {
+        console.error(err);
+    }
     if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
 
 async function sendJoinEmail (to) {
-    const emailSent = await sendEmail(to, "You joined our site!", joinText, joinHTML);
+    try {
+        const emailSent = await sendEmail(to, "You joined our site!", joinText, joinHTML);
+    } catch (err) {
+        console.error(err);
+    }
     if (!emailSent) {
         console.log("Email Failed to Send");
     }
 };
 
 async function sendReportedEmail (to) {
+    try {
     const emailSent = await sendEmail(to, "Someone didn't like you!", reportedText, reportedHTML);
+    } catch (err) {
+        console.error(err);
+    }
     if (!emailSent) {
         console.log("Email Failed to Send");
     }
