@@ -302,6 +302,28 @@ function acceptRequest(userID, friendID){
     }
 };
 
+function findFriendsByID(userID){
+    const sql = `
+        SELECT friendID AS friend
+        FROM Friends
+        WHERE userID = @userID
+        UNION 
+        SELECT userID AS friend
+        FROM Friends
+        WHERE friendID = @userID`;
+
+    const stmt = db.prepare(sql);
+    try {
+        friends = stmt.all({
+            "userID": userID
+        });
+    } catch (err) {
+        console.error(err);
+        return;
+    }
+    return friends;
+}
+
 module.exports = {
     createUser,
     getUserByUsername,
@@ -309,5 +331,6 @@ module.exports = {
     deleteUserByUsername,
     reportUser,
     requestFriend,
-    acceptRequest
+    acceptRequest,
+    findFriendsByID
 }
