@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS Users (
     userName TEXT(20) UNIQUE NOT NULL,
     userPasswordHash TEXT(50) NOT NULL UNIQUE,
     userEmail TEXT(20) NOT NULL,
-    userPhone INTEGER
+    userPhone INTEGER,
+    strikes INTEGER DEFAULT 0
 );
 
 -- User Image Tables
@@ -17,33 +18,38 @@ CREATE TABLE IF NOT EXISTS UserImages (
 -- Event tables
 CREATE TABLE IF NOT EXISTS Events (
     eventId TEXT UNIQUE PRIMARY KEY,
-    hostId TEXT NOT NULL UNIQUE REFERENCES Users(userID),
+    hostId TEXT NOT NULL REFERENCES Users(userID),
     eventName TEXT(20) NOT NULL,
     eventDescription TEXT(200),
     eventDate TEXT(20) NOT NULL,
-    locationName TEXT(20),
-    zipcode INT NOT NULL,
+    locationName TEXT(100) NOT NULL,
     latitude INT NOT NULL,
     longitude INT NOT NULL
 );
 
--- Relations
+-- Event Image Table
+CREATE TABLE IF NOT EXISTS EventImages (
+    imageId TEXT UNIQUE PRIMARY KEY,
+    parentEventId TEXT NOT NULL REFERENCES Events(eventId),
+    imagePath TEXT NOT NULL
+);
 
+-- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,
-   eventName  TEXT(30),
-   PRIMARY KEY (userID, eventName)
-  );
+   eventId TEXT,
+   PRIMARY KEY (userID, eventId)
+);
 
-CREATE TABLE IF NOT EXISTS FriendsWith (
+CREATE TABLE IF NOT EXISTS Friends (
    userID TEXT,
    friendID  TEXT,
+   accepted BOOLEAN DEFAULT FALSE,
    PRIMARY KEY (userID, friendID)
   );
 
-CREATE TABLE IF NOT EXISTS StrikedUsers (
+CREATE TABLE IF NOT EXISTS ReportedUsers (
    userID TEXT,
-   strikedID  TEXT,
-   strikeNumber INTEGER,
-   PRIMARY KEY (userID, strikedID)
+   reportedID  TEXT,
+   PRIMARY KEY (userID, reportedID)
   );

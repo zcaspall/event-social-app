@@ -10,32 +10,38 @@ async function createNewUser(req, res){
     if(!req.body.userName || !req.body.userPassword
         || !req.body.userEmail || !req.body.userPhone){
         return res.sendStatus(400);
-    }
-    else{
+    } else {
         await userModels.createUser(userName, userPassword, userEmail, userPhone);
-        res.sendStatus(201);
+        res.redirect("/");
     }
 }
 
 async function loginUser(req, res){
-    if (!req.body.userName || !req.body.userPassword) {
-        return res.sendStatus(400);
-    }
-
-    const {userName, userPassword} = req.body;
-
-    const user = userModels.getUserByUsername(userName);
-
+    const {username, password} = req.body;
+    const user = userModels.getUserByUsername(username);
+    
     if (!user) {
         return res.sendStatus(400);
     }
 
-    const { userPasswordHash } = user;
+    const { userPasswordHash, userID } = user;
 
-    if (await argon2.verify(userPasswordHash, userPassword)) {
-        res.sendStatus(200);
+    if (await argon2.verify(userPasswordHash, password)) {
+        req.session.regenerate((err) => {
+            if (err) {
+                console.error(err);
+                return res.sendStatus(500);
+            }
+            
+            req.session.user = {};
+            req.session.user.userName = username;
+            req.session.user.userID = userID;
+            req.session.isLoggedIn = true;
+            
+            res.redirect("/");
+        });
     } else { 
-        res.sendStatus(400);
+        return res.sendStatus(400);
     }
 }
 
@@ -70,10 +76,67 @@ function renderAccount(req, res){
     res.render("accountPage", {"user": user})
 }
 
+function sendFriendRequest(req, res){
+    if(!req.session.isLoggedIn)
+        return res.redirect("/login");
+
+    if(!req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {friendName} = req.body;
+    const friend = userModels.getUserByUsername(friendName);
+    const friendID = friend.userID;
+    const userID = req.session.user.userID;
+
+    const success = userModels.requestFriend(userID, friendID);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+};
+
+function sendUserReport(req, res){
+    if(!req.session.isLoggedIn)
+        return res.redirect("/login");
+
+    if(!req.body.reportedName){
+        return res.sendStatus(400);
+    }
+    const userName = req.session.user.userName.toLowerCase();
+
+    const {reportedName} = req.body;
+    
+    const success = userModels.reportUser(userName, reportedName);
+    if (!success){
+        return res.sendStatus(409);
+    }
+
+    res.sendStatus(200);
+};
+
+function acceptFriendRequest (req, res){
+    if(!req.session.isLoggedIn)
+        return res.redirect("/login");
+
+    if(!req.body.userName || !req.body.friendName){
+        return res.sendStatus(400);
+    }
+
+    const {userName, friendName} = req.body; 
+    userModels.acceptRequest(userName, friendName);
+
+    res.sendStatus(200);
+};
+
 module.exports = {
     createNewUser,
     loginUser,
     deleteUserByName,
     renderAccount,
     userProfilePicture,
+    sendFriendRequest,
+    sendUserReport,
+    acceptFriendRequest
 }
