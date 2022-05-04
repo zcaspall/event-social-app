@@ -107,10 +107,6 @@ function acceptFriendRequest (req, res){
     res.redirect("/accept");
 };
 
-
-
-
-
 module.exports = {
     createNewUser,
     loginUser,

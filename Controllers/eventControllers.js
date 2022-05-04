@@ -30,8 +30,11 @@ async function createEvent(req, res, next){
     const longitude = eventLocation.properties.lon;
 
     res.redirect("/");
-    
-    await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
+    try {
+        await eventModels.addNewEvent(hostId, eventName, eventDate, locationName, lattitude, longitude, eventDescription, filename, path);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 function renderEventPage(req, res) {
@@ -53,9 +56,27 @@ function renderEvent(req, res) {
     res.render("event", {event});
 }
 
+async function joinEvent(req, res) {
+    const { user, isLoggedIn } = req.session;
+    if (!isLoggedIn) {
+        return res.redirect("/login");
+    }
+
+    const userId = user.userID;
+    const eventId = req.params.eventId;
+    try {
+        await eventModels.joinEvent(userId, eventId);
+    } catch (err) {
+        console.error(err);
+    }
+
+    res.redirect("/");
+}
+
 module.exports = { 
     renderMain,
     createEvent,
     renderEventPage,
-    renderEvent
+    renderEvent,
+    joinEvent
 };

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS EventImages (
 -- Relations
 CREATE TABLE IF NOT EXISTS UsersGoingTo (
    userID TEXT,
-   eventId TEXT,
+   eventID TEXT,
    PRIMARY KEY (userID, eventId)
 );
 
