@@ -55,25 +55,42 @@ function deleteUserByName(req, res){
     res.sendStatus(200);
 }
 
-function userProfilePicture(req, res){
-    const{userID} = req.body.userID;
+async function userProfilePicture(req, res){
+    const{user, isLoggedIn} = req.session;
+    const{path, filename} = req.file;
 
-    if(!userModels.getImage(userID)){
-        return res.sendStatus(404);
+    const userID = user.userID
+
+    if(!isLoggedIn){
+        return res.redirect("/login");
+    }
+
+    const imageID = filename;
+    const imageOwned = user.userID;
+    const pfpPath = path;
+
+    try{
+        await userModels.uploadImage(imageOwned, imageID, pfpPath)
+    }
+    catch(err){
+        console.log(err);
     }
 
     userModels.getImage(userID);
-    res.sendStatus(200);
+    res.redirect("/users/:userID");
 }
 
 function renderAccount(req, res){
-    const user = userModel.getUserByID(req.params.userID);
+    const {user, isLoggedIn} = req.session;
 
-    if(!user){
-        res.status(404);
+    if(!user || !isLoggedIn){
+        return res.status(404);
     }
 
-    res.render("accountPage", {"user": user})
+    const image = userModels.getImage(user.userID);
+
+    const accountOwner = userModels.getUserByID(user.userID);
+    res.render("accountPage", {"user": accountOwner , "image": image});
 }
 
 function sendFriendRequest(req, res){

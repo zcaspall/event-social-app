@@ -47,29 +47,20 @@ app.use(express.static("public", {
     extensions: ['html', 'js', 'css', 'png', 'jpg', 'jpeg']
 }));
 
-const multer = require("multer");
-
-const profileStorage = multer.diskStorage({
-      destination: (req, file, cb) => {
-          cb(null, "./public/profilePictures");
-      },
-      filename: (req, file, cb) => {
-          cb(null, Date.now() + "--" + file.originalname);
-      },
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./public/images/profilePictures");
+    },
 });
 
-const upload = multer({ storage: profileStorage });
+const profileStorage = multer({storage: fileStorage});
 
-app.post("/users/:userID/picture", upload.single("picture"), (req, res) => {
-  console.log(req.file);
-  res.send("File uploaded");
-});
+// user endpoints
+app.post("/users/:userID/picture", profileStorage.single("picture"), userController.userProfilePicture)
 
 app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
-
 app.get("/users/:userID", userController.renderAccount);
-// user endpoints
 app.get("/", eventController.renderMain);
 app.post("/register",registerValidator.validateRegisterBody, userController.createNewUser);
 app.post("/login", loginValidator.validateLoginBody, userController.loginUser);

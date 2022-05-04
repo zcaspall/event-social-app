@@ -4,13 +4,13 @@ const eventModels = require("../Models/eventModels");
 function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
-        res.redirect("/login");
+        return res.redirect("/login");
     }
     const hostId = user.userID;
     const hostedEvents = eventModels.getEventsByHost(hostId);
     const attendedEvents = eventModels.getEventsAttendedByUser(hostId);
 
-    res.render("mainPage", {hostedEvents, attendedEvents});
+    res.render("mainPage", {hostedEvents, attendedEvents, user});
 }
 
 async function createEvent(req, res, next){

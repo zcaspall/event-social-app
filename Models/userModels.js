@@ -145,14 +145,34 @@ function getUserByID (userID) {
     return record;
 }
 
+function uploadImage(imageOwner, imageID, pfpPath){
+    const sql = `INSERT INTO UserImages
+                    (imageID, imageOwner, pfpPath)
+                Values
+                    (@imageID, @imageOwner, @pfpPath)`;
+    
+    const stmt = db.prepare(sql);
+    try{
+        stmt.run({
+            "imageID": imageID,
+            "imageOwner": imageOwner,
+            "pfpPath": pfpPath,
+        });
+    }
+    catch(err){
+        console.log(err);
+    }
+};
+
 function getImage(userID){
-    const sql = `SELECT * FROM Users WHERE userID = @userID EventImages JOIN Users ON userID=imageOwner`;
+    const sql = `SELECT * FROM Users 
+                 JOIN UserImages ON 
+                 userID=imageOwner WHERE userID = @userID `;
 
     const stmt = db.prepare(sql);
     const record = stmt.get({
         "userID": userID
     });
-    
     return record;
 }
 
@@ -329,5 +349,6 @@ module.exports = {
     deleteUserByUsername,
     reportUser,
     requestFriend,
-    acceptRequest
+    acceptRequest,
+    uploadImage,
 }

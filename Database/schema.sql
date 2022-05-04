@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS UserImages (
   imageID TEXT UNIQUE PRIMARY KEY,
   imageOwner TEXT NOT NULL REFERENCES Users(userID),
   pfpPath TEXT NOT NULL
-)
+);
 
 -- Event tables
 CREATE TABLE IF NOT EXISTS Events (
