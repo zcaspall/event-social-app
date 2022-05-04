@@ -1,11 +1,8 @@
 "use strict";
 const eventModels = require("../Models/eventModels");
-const multer = require("multer");
 
-<<<<<<< HEAD
  const eventImages = multer({ dest: "eventImages/"});
  
-=======
 function renderMain (req, res) {
     const { user, isLoggedIn } = req.session;
     if (!user || !isLoggedIn) {
@@ -18,7 +15,6 @@ function renderMain (req, res) {
     res.render("mainPage", {hostedEvents, attendedEvents, user});
 }
 
->>>>>>> 6361be625e5b6ff98fdc8782d6ccd432bf93c0ff
 async function createEvent(req, res){
     const { path, filename } = req.file;
     const { user, isLoggedIn } = req.session;
@@ -62,6 +58,13 @@ function renderEvent(req, res) {
     res.render("event", {event});
 }
 
+function uploadEventPics(req, res){
+    eventImages.array("eventImages");
+    console.log(req.files);
+    console.log(req.body);
+    res.sendStatus(200);
+}
+
 async function joinEvent(req, res) {
     const { user, isLoggedIn } = req.session;
     if (!isLoggedIn) {
@@ -79,28 +82,14 @@ async function joinEvent(req, res) {
     res.redirect("/");
 }
 
-
-// Event Photos
-
-//const eventUpload = multer({storage: fileStorage});
-
-function uploadEventPics(req, res){
-    eventImages.array("eventImages");
-    console.log(req.files);
-    console.log(req.body);
-    res.sendStatus(200);
-}
-
-module.exports = { 
+module.exports = {
     renderMain,
     createEvent,
-<<<<<<< HEAD
     getSearchResultsByKeyword,
     uploadEventPics,
-}
-=======
+    createEvent, 
+    uploadEventPics,
     renderEventPage,
     renderEvent,
     joinEvent
 };
->>>>>>> 6361be625e5b6ff98fdc8782d6ccd432bf93c0ff

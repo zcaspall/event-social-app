@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/users.css">
-    <title>user</title>
+    <title>Account</title>
 </head>
 <body>
+
     <div class="row">
-        <p><%= user.firstName + " " + user.lastName %></p>
+        <p><%= user.userName%></p>
     </div>
 
-    <form action="/users/<%=users.userID%>/pfp" method="post" enctype="multipart/form-data">
+    <img src="/images/profilePictures/<%=image.imageID%>">
+
+    <form action="/users/<%=user.userID%>/picture" method="post" enctype="multipart/form-data">
         <input type="file" name="picture" id="picture">
         <button>Upload</button>
     </form>
-    <img src="/images/profilePictures/"
+
 </body>
 </html>

@@ -14,7 +14,6 @@ const loginSchema = joi.object({
     username: joi.string()
                  .min(3)
                  .token()
-                 .lowercase()
                  .required(),
     
     password: joi.string()
