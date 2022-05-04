@@ -179,7 +179,7 @@ function getImage(userID){
         "userID": userID
     });
     return record;
-}
+};
 
 function deleteUserByUsername (userName) {
     const sql = `DELETE FROM Users WHERE userName = @userName`;
@@ -188,7 +188,7 @@ function deleteUserByUsername (userName) {
     stmt.run({
         "userName": userName.toLowerCase()
     });
-}
+};
 
 function reportUser(userName, reportedName){
     const user = getUserByUsername(userName);

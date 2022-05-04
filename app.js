@@ -62,17 +62,17 @@ app.post("/register", userController.createNewUser);
 app.post("/login", userController.loginUser);
 app.get("/users/:userID", userController.renderAccount);
 app.get("/", eventController.renderMain);
-app.post("/register",registerValidator.validateRegisterBody, catchAsyncErrors(userController.createNewUser));
-app.post("/login", loginValidator.validateLoginBody, catchAsyncErrors(userController.loginUser));
+app.post("/register",registerValidator.validateRegisterBody, userController.createNewUser);
+app.post("/login", loginValidator.validateLoginBody, userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 app.post("/friend", friendValidator.validateRequestBody, userController.sendFriendRequest);
 app.post("/report", reportValidator.validateReportBody, userController.sendUserReport);
 app.get("/accept/:userID", userController.acceptFriendRequest);
 
 //event endpoints
-app.post("/events", eventValidator.validateEventBody, eventImages.single('file'), catchAsyncErrors(eventController.createEvent));
+app.post("/events", eventValidator.validateEventBody, eventImages.single('file'), eventController.createEvent);
 app.get("/events", eventController.renderEventPage);
 app.get("/events/:eventId", eventController.renderEvent);
-app.post("/join/:eventId", catchAsyncErrors(eventController.joinEvent));
+app.post("/join/:eventId", eventController.joinEvent);
 
 module.exports = app;
