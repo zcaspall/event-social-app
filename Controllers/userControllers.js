@@ -100,14 +100,11 @@ function acceptFriendRequest (req, res){
     if(!req.session.isLoggedIn)
         return res.redirect("/login");
 
-    if(!req.body.userName || !req.body.friendName){
-        return res.sendStatus(400);
-    }
+    const userID = req.params.userID;
+    const friendID = req.session.user.userID; 
+    userModels.acceptRequest(userID, friendID);
 
-    const {userName, friendName} = req.body; 
-    userModels.acceptRequest(userName, friendName);
-
-    res.sendStatus(200);
+    res.redirect("/accept");
 };
 
 

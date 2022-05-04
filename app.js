@@ -54,7 +54,7 @@ app.post("/login", loginValidator.validateLoginBody, userController.loginUser);
 app.delete("/users/:userName", userController.deleteUserByName);
 app.post("/friend", friendValidator.validateRequestBody, userController.sendFriendRequest);
 app.post("/report", reportValidator.validateReportBody, userController.sendUserReport);
-app.post("/accept", userController.acceptFriendRequest);
+app.get("/accept/:userID", userController.acceptFriendRequest);
 
 //event endpoints
 app.post("/events", eventImages.single('file'), eventController.createEvent);
