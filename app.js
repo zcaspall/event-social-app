@@ -38,7 +38,7 @@ const reportValidator = require("./Validators/reportValidator");
 const friendValidator = require("./Validators/friendValidator");
 const { RedisClient } = require("redis");
 const { func } = require("joi");
-const { notFoundHandler, productionErrorHandler } = require("./utils/errorHandler");
+const { notFoundHandler, productionErrorHandler, catchAsyncErrors } = require("./utils/errorHandler");
 
 app.set('view engine', 'ejs');
 
