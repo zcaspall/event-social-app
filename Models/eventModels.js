@@ -89,7 +89,7 @@ function getEventsByHost(hostId) {
 };
 
 function getEventsAttendedByUser(userId) {
-    const sql = `SELECT * FROM Events 
+    const sql = `SELECT * FROM Events JOIN EventImages ON eventId=parentEventId
                 WHERE eventId IN (
                     SELECT eventId FROM UsersGoingTo 
                     WHERE userId = @userId

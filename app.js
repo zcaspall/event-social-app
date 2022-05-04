@@ -60,5 +60,6 @@ app.get("/accept/:userID", userController.acceptFriendRequest);
 app.post("/events", eventImages.single('file'), eventController.createEvent);
 app.get("/events", eventController.renderEventPage);
 app.get("/events/:eventId", eventController.renderEvent);
+app.post("/join/:eventId", eventController.joinEvent);
 
 module.exports = app;

@@ -8,6 +8,12 @@
 </head>
 <body>
     <h1><%= event.eventName %></h1>
-    <img src="../public/images/eventImages/<%= event.imageId %>">
+    <img src="/images/eventImages/<%= event.imageId %>">
+    <p><%= event.eventDescription %></p>
+    <p><%= event.locationName %></p>
+    <p><%= event.eventDate %></p>
+    <form action="/join/<%= event.eventId %>" method="POST">
+        <button type="submit">Join Event</button>
+    </form>
 </body>
 </html>
