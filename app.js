@@ -40,8 +40,6 @@ const { RedisClient } = require("redis");
 const { func } = require("joi");
 const { notFoundHandler, productionErrorHandler, catchAsyncErrors } = require("./utils/errorHandler");
 
-app.set('view engine', 'ejs');
-
 app.use(express.json({limit: '200kb'}));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public", {
@@ -51,7 +49,7 @@ app.use(express.static("public", {
 
 // user endpoints
 app.get("/", eventController.renderMain);
-app.post("/register",registerValidator.validateRegisterBody, catchAsyncErrors(userController.createNewUser));
+app.post("/register", registerValidator.validateRegisterBody, catchAsyncErrors(userController.createNewUser));
 app.post("/login", loginValidator.validateLoginBody, catchAsyncErrors(userController.loginUser));
 app.delete("/users/:userName", userController.deleteUserByName);
 app.post("/friend", friendValidator.validateRequestBody, userController.sendFriendRequest);

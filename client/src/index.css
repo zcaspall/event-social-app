@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+html {
+  /* Theme variables */
+  --main-bg-color: #161314;
+  --light-text-color: #F2F2F8;
+  --dark-text-color: #161314;
+  --primary-color: #7C90DB;
+  --secondary-color: #252941;
+  --accent-color: #F58E99;
+  --error-color: #F05666;
+
+  /* Sets the root size to 10px
+  while allowing for user to change it*/
+  font-size: 62.5%;
+
+  font-family: 'roboto', sans-serif;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+button {
+  font-family: inherit;
+}
+
+.error-message {
+  color: var(--error-color);
+}

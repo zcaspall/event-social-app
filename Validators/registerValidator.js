@@ -11,32 +11,43 @@ const validateOpts ={
 };
 
 const registerSchema = joi.object({
-    userName: joi.string()
+    firstname: joi.string()
+                  .required()
+                  .messages({ "string.empty": "Firstname is required" }),
+    
+    lastname: joi.string()
+                 .required()
+                 .messages({ "string.empty": "Lastname is required" }),
+
+    username: joi.string()
                  .min(3)
                  .token()
-                 .lowercase()
-                 .required(),
+                 .required()
+                 .messages({ 
+                    "string.min": "Username must be at least 3 characters long",
+                    "string.token": "Username must be alphanumeric",
+                    "string.empty": "Username is required",
+                }),
     
-    userPassword: joi.string()
+    password: joi.string()
                  .min(6)
-                 .required(),
+                 .required()
+                 .messages({ "string.min": "Password must be at least 6 characters long",
+                             "string.empty": "Password is required"
+                 }),
     
-    confirmPassword: joi.string()
+    confirmedPassword: joi.string()
                     .min(6)
                     .required()
-                    .valid(joi.ref('userPassword')),
+                    .valid(joi.ref('password'))
+                    .messages({ "any.only": "Passwords must match" }),
     
-    userEmail: joi.string()
+    email: joi.string()
               .email()
-              .required(),
-    
-    userDOB: joi.date()
-            .required(),
-    
-    userPhone: joi.string()
-              .length(10)
-              .pattern(/^[0-9]+$/)
-              .required(),
+              .required()
+              .messages({ "string.email": "Email must be valid",
+                          "string.empty": "Email is required"
+                    }),
 });
 
 function validateRegisterBody (req, res, next) {

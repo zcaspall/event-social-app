@@ -12,14 +12,12 @@ const validateOpts ={
 
 const loginSchema = joi.object({
     username: joi.string()
-                 .min(3)
-                 .token()
-                 .lowercase()
-                 .required(),
+                 .required()
+                 .messages({ "string.empty": "Username is required" }),
     
     password: joi.string()
-                 .min(6)
                  .required()
+                 .messages({ "string.empty": "Password is required" }),
 });
 
 function validateLoginBody (req, res, next) {

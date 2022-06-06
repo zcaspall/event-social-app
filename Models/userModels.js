@@ -98,32 +98,33 @@ async function sendReportedEmail (to) {
     }
 };
 
-async function createUser(userName, userPassword, userEmail, userPhone){
+async function createUser(firstname, lastname, username, email, password) {
     const uuid = crypto.randomUUID();
-    const hash = await argon2.hash(userPassword);
+    const hash = await argon2.hash(password);
 
     const sql = `
         INSERT INTO users
-            (userID, userName, userPasswordHash, userEmail, userPhone)
+            (userId, firstname, lastname, email, username, passwordHash)
         VALUES
-            (@userID, @userName, @userPasswordHash, @userEmail, @userPhone)
+            (@userId, @firstname, @lastname, @email, @username, @passwordHash)
     `;
 
     const stmt = db.prepare(sql);
 
     try{
         stmt.run({
-            "userID": uuid,
-            "userName": userName.toLowerCase(),
-            "userPasswordHash": hash,
-            "userEmail": userEmail.toLowerCase(),
-            "userPhone": userPhone,
+            userId: uuid,
+            firstname,
+            lastname,
+            email,
+            username,
+            passwordHash: hash
         });
     }
     catch(err){
         console.error(err);
     }
-    sendJoinEmail(userEmail);
+    sendJoinEmail(email);
 };
 
 function getUserByUsername (userName) {

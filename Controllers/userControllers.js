@@ -3,20 +3,17 @@ const userModels = require("../Models/userModels");
 const argon2 = require("argon2");
 
 async function createNewUser(req, res){
-    
-    const {userName, userPassword, userEmail, userPhone} = req.body;
+    res.sendStatus(200);
 
-    if(!req.body.userName || !req.body.userPassword
-        || !req.body.userEmail || !req.body.userPhone){
-        return res.sendStatus(400);
-    } else {
-        try{
-        await userModels.createUser(userName, userPassword, userEmail, userPhone);
-        } catch (error){
-            console.error(error);
-        }
-        res.redirect("/");
-    }
+    // const { firstname, lastname, username, email, password } = req.body;
+    
+    // try{
+    //     await userModels.createUser(firstname, lastname, username, email, password);
+    //     return res.sendStatus(200);
+    // } catch (error){
+    //     console.error(error);
+    //     return res.sendStatus(500);
+    // }
 }
 
 async function loginUser(req, res){
