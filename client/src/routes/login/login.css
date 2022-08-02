@@ -91,3 +91,7 @@ a {
     border-radius: 30px;
 }
 
+#login-error {
+    font-size: 1.5rem;
+}
+

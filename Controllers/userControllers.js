@@ -3,17 +3,16 @@ const userModels = require("../Models/userModels");
 const argon2 = require("argon2");
 
 async function createNewUser(req, res){
-    res.sendStatus(200);
 
-    // const { firstname, lastname, username, email, password } = req.body;
+    const { firstname, lastname, username, email, password } = req.body;
     
-    // try{
-    //     await userModels.createUser(firstname, lastname, username, email, password);
-    //     return res.sendStatus(200);
-    // } catch (error){
-    //     console.error(error);
-    //     return res.sendStatus(500);
-    // }
+    try{
+        await userModels.createUser(firstname, lastname, username, email, password);
+        return res.sendStatus(200);
+    } catch (error){
+        console.error(error);
+        return res.sendStatus(500);
+    }
 }
 
 async function loginUser(req, res){
@@ -23,29 +22,29 @@ async function loginUser(req, res){
     if (!user) {
         return res.sendStatus(400);
     }
-
-    const { userPasswordHash, userID } = user;
-
+    
+    const { passwordHash, userId } = user;
+    
     try{
-    if (await argon2.verify(userPasswordHash, password)) {
-        req.session.regenerate((err) => {
-            if (err) {
-                console.error(err);
-                return res.sendStatus(500);
-            }
-            
-            req.session.user = {};
-            req.session.user.userName = username;
-            req.session.user.userID = userID;
-            req.session.isLoggedIn = true;
-            
-            res.redirect("/");
-        });
-    } else { 
-        return res.sendStatus(400);
-    }
+        if (await argon2.verify(passwordHash, password)) {
+            req.session.regenerate((err) => {
+                if (err) {
+                    console.error(err);
+                    return res.sendStatus(500);
+                }
+                
+                req.session.user = {};
+                req.session.user.userName = username;
+                req.session.user.userID = userId;
+                req.session.isLoggedIn = true;
+            });
+
+            return res.sendStatus(200);
+        } else { 
+            return res.sendStatus(400);
+        }
     } catch (err){
-        console.error(error);
+        console.error(err);
     }
 }
 

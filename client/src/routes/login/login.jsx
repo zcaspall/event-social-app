@@ -7,6 +7,7 @@ import './login.css';
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isValid, setIsValid] = useState(undefined);
 
     const navigate = useNavigate();
 
@@ -16,22 +17,23 @@ export default function Login() {
         const data = { username, password };
         
         try {
-            const response = fetch('/login', {
+            const response = await fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
-            }) 
-
+            })
+            
             if (response.ok) {
+                setIsValid(true);
                 try {
                     navigate('/');
                 } catch (err) {
                     console.error("Failed to parse json response");
                 }
             } else {
-                
+                setIsValid(false);
             }
         } catch (err) {
             console.error(err);
@@ -44,6 +46,7 @@ export default function Login() {
             <div id="login-container">
                 <form id="login-form">
                     <h1>Login</h1>
+                    {isValid === false && <p className="error-message" id="login-error">Invalid username or password</p>}
                     <div id="username-container" className='input-container'>
                         <label htmlFor="username" className="login-form-label">Username</label>
                         <input type="text" name="username" className="login-form-input"
